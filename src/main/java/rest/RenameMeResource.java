@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import utils.Population;
 
 //Todo Remove or change relevant parts before ACTUAL use
 @Path("xxx")
@@ -31,5 +32,11 @@ public class RenameMeResource {
         long count = FACADE.getRenameMeCount();
         //System.out.println("--------------->"+count);
         return "{\"count\":"+count+"}";  //Done manually so no need for a DTO
+    }
+    @Path("populate")
+    @GET
+    public void populate() {
+       utils.Population.populate();
+
     }
 }

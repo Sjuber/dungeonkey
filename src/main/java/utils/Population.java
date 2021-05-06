@@ -10,9 +10,9 @@ import entities.AbillityScores;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-public class populator {
+public class Population {
 
-  public static void main(String[] args) {
+  public static void populate() {
 
     EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
     EntityManager em = emf.createEntityManager();
@@ -39,10 +39,10 @@ public class populator {
     em.persist(DM);
     em.persist(both);
     
-    System.out.println("PW: " + player.getPassword());
-    System.out.println("Testing user with OK password: " + player.verifyPassword("Hamster16"));
-    System.out.println("Testing user with wrong password: " + player.verifyPassword("Nollerik510"));
-    System.out.println("Created TEST Users");
+//    System.out.println("PW: " + player.getPassword());
+//    System.out.println("Testing user with OK password: " + player.verifyPassword("Hamster16"));
+//    System.out.println("Testing user with wrong password: " + player.verifyPassword("Nollerik510"));
+//    System.out.println("Created TEST Users");
     AbillityScores abiSco1 = new AbillityScores(18,8,14,12,14,10);
     Character ch1 = new Character(5,104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin",abiSco1);
     em.persist(ch1);

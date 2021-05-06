@@ -31,7 +31,7 @@ public class AbillityScores implements Serializable {
     private Integer wisdom;
     private Integer intelligence;
     private Integer charisma;
-    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "abillitdyScores")
+    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "abillityScores")
     private Character character;
 
         public AbillityScores( Integer strength, Integer dexterity, Integer constitution, Integer wisdom, Integer intelligence, Integer charisma) {
