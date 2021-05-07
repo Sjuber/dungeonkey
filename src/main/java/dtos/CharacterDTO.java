@@ -15,5 +15,9 @@ public class CharacterDTO {
     public int getId() {
         return id;
     }
+
+    public AbillityScoresDTO getAbilityScoreDTO() {
+        return abilityScoreDTO;
+    }
     
 }

@@ -32,6 +32,12 @@ public class CharacterResource {
         AbillityScoresDTO asdto = facade.getASByCharacter(characterID);
         return GSON.toJson(asdto);
     }
+    @Path("greetings")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String greetingTest() {
+        return "Hello awesome";
+    }
     
     @Path("{characterid}/abillityscores")
     @PUT
