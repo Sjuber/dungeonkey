@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 
 /**
@@ -19,6 +20,7 @@ import javax.persistence.OneToOne;
  * @author SJUBE
  */
 @Entity
+@Table(name = "abillityscores")
 public class AbillityScores implements Serializable {
 
     private static final long serialVersionUID = 1L;
