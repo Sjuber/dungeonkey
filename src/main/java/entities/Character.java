@@ -40,7 +40,7 @@ public class Character implements Serializable {
     private String classs;
     @OneToOne(cascade = CascadeType.PERSIST)
     private AbillityScores abillityScores;
-    @OneToMany(mappedBy = "player")
+    @ManyToOne
     private Player player;
     
 

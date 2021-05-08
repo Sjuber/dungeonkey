@@ -2,6 +2,8 @@
 package dtos;
 
 import entities.AbillityScores;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 
 public class AbillityScoresDTO {
     

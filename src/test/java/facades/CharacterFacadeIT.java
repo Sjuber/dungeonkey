@@ -58,7 +58,7 @@ public class CharacterFacadeIT {
             em.persist(DM);
             em.persist(both);
             em.getTransaction().commit();
-        } finally {
+        }finally {
             em.close();
         }
     }
@@ -73,10 +73,9 @@ public class CharacterFacadeIT {
         AbillityScores aS = new AbillityScores(11, 11, 11, 11, 11, 11);
         AbillityScoresDTO aSDTONew = new AbillityScoresDTO(aS);
         int characterID = 1;
-        CharacterFacade instance = new CharacterFacade();
         Character characterNewAS = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", aS);
         CharacterDTO expResult = new CharacterDTO(characterNewAS);
-        CharacterDTO result = instance.updateAbillityScores(aSDTONew, characterID);
+        CharacterDTO result = facade.updateAbillityScores(aSDTONew, characterID);
         assertEquals(expResult.getAbilityScoreDTO().getStrength(), result.getAbilityScoreDTO().getStrength());
     }
 
@@ -85,9 +84,8 @@ public class CharacterFacadeIT {
     public void testGetASByCharacter() {
         System.out.println("getASByCharacter");
         int characterID = 1;
-        CharacterFacade instance = new CharacterFacade();
         AbillityScoresDTO expResult = new AbillityScoresDTO(new AbillityScores(18, 8, 14, 12, 14, 10));
-        AbillityScoresDTO result = instance.getASByCharacter(characterID);
+        AbillityScoresDTO result = facade.getASByCharacter(characterID);
         assertEquals(expResult.getStrength(), result.getStrength());
     }
 

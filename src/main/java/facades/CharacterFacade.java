@@ -24,11 +24,17 @@ public class CharacterFacade {
     public static CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID){
         EntityManager em = emf.createEntityManager();
         Character dbCharacter;
-        AbillityScores aSNew = new AbillityScores(aSDTONew.getStrength(), aSDTONew.getDexterity(),aSDTONew.getConstitution(),aSDTONew.getWisdom(),aSDTONew.getIntelligence(),aSDTONew.getCharisma());
-        try {
+         try {
             em.getTransaction().begin();
             dbCharacter = em.find(Character.class, characterID);
-            dbCharacter.setAbillityScores(aSNew);
+            AbillityScores aSFromDB = em.find(AbillityScores.class, dbCharacter.getAbillityScores().getId());
+            aSFromDB.setCharisma(aSDTONew.getCharisma());
+            aSFromDB.setStrength(aSDTONew.getStrength());
+            aSFromDB.setDexterity(aSDTONew.getDexterity());
+            aSFromDB.setConstitution(aSDTONew.getConstitution());
+            aSFromDB.setIntelligence(aSDTONew.getIntelligence());
+            aSFromDB.setWisdom(aSDTONew.getWisdom());
+            aSFromDB.setCharacter(dbCharacter);
             em.merge(dbCharacter);
             em.getTransaction().commit();
         } finally {
@@ -50,8 +56,4 @@ public class CharacterFacade {
         return new AbillityScoresDTO(character.getAbillityScores());
     }
     
-    public static void main(String[] args) {
-      
-        updateAbillityScores(new AbillityScoresDTO(new AbillityScores(2,3,4,5,56,2)),1);
-    }
 }
