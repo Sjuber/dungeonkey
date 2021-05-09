@@ -42,6 +42,8 @@ public class Character implements Serializable {
     private AbillityScores abillityScores;
     @ManyToOne
     private Player player;
+    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "inventory")
+    private Inventory inventory;
     
 
     public Character(Integer lvl,Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
@@ -154,7 +156,10 @@ public class Character implements Serializable {
     public Player getPlayer() {
         return player;
     }
-    
+
+    public Inventory getInventory() {
+        return inventory;
+    }
 
     @Override
     public String toString() {

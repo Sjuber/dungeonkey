@@ -7,7 +7,7 @@ import entities.AbillityScores;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import entities.Character;
-import java.util.ArrayList;
+import entities.Equipment;
 import java.util.List;
 import javax.persistence.TypedQuery;
 
@@ -57,6 +57,11 @@ public class CharacterFacade {
             em.close();
         }
         return new AbillityScoresDTO(character.getAbillityScores());
+    }
+    
+    public CharacterDTO adjustCharactersInventory(Equipment equipment, int qtyForGivenEqip){
+        //TODO
+        return null;
     }
     
     public List<CharacterDTO> searchByName(String characterName){
