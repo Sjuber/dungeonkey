@@ -1,6 +1,8 @@
 
 package dtos;
 import entities.Character;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CharacterDTO {
 
@@ -18,6 +20,11 @@ public class CharacterDTO {
 
     public AbillityScoresDTO getAbilityScoreDTO() {
         return abilityScoreDTO;
+    }
+    public static List<CharacterDTO> getDtos(List<Character> characters){
+        List<CharacterDTO> cdtos = new ArrayList();
+        characters.forEach(character->cdtos.add(new CharacterDTO(character)));
+        return cdtos;
     }
     
 }
