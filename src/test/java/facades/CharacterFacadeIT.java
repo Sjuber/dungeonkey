@@ -20,7 +20,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
-@Disabled
+//@Disabled
 public class CharacterFacadeIT {
 
     private static EntityManagerFactory emf;
@@ -89,11 +89,12 @@ public class CharacterFacadeIT {
         AbillityScores aS = new AbillityScores(11, 11, 11, 11, 11, 11);
         AbillityScoresDTO aSDTONew = new AbillityScoresDTO(aS);
         EntityManager em = emf.createEntityManager();
-       TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c WHERE c.name =:charactername AND c.player.userName :=username", Character.class);
-        characterIDQuery.setParameter("charactername", "Damascus");
-        characterIDQuery.setParameter("username", "Nikolaj");
+       TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE c.name =:charactername AND p.userName =:username", Character.class);
+        characterIDQuery.setParameter("charactername", "Damascus").setParameter("username", "Nikolaj");
         int characterID = characterIDQuery.getSingleResult().getId();
+        Player player1 = new Player("Nikolaj", "Hamster16");
         Character characterNewAS = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", aS);
+        characterNewAS.setPlayer(player1);
         CharacterDTO expResult = new CharacterDTO(characterNewAS);
         CharacterDTO result = facade.updateAbillityScores(aSDTONew, characterID);
         assertEquals(expResult.getAbilityScoreDTO().getStrength(), result.getAbilityScoreDTO().getStrength());
@@ -105,9 +106,8 @@ public class CharacterFacadeIT {
         EntityManager em = emf.createEntityManager();
         String name = "Damascus";
         String userName = "Nikolaj";
-        TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c LEFT JOIN c.player p WHERE p.userName :=username AND WHERE c.name =:name", Character.class);
-        characterIDQuery.setParameter("name", name);
-        characterIDQuery.setParameter("username", userName);
+        TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:username AND c.name =:name", Character.class);
+        characterIDQuery.setParameter("username", userName).setParameter("name", name);
         int characterID = characterIDQuery.getSingleResult().getId();
         AbillityScoresDTO expResult = new AbillityScoresDTO(new AbillityScores(18, 8, 14, 12, 14, 10));
         AbillityScoresDTO result = facade.getASByCharacter(characterID);
@@ -118,32 +118,40 @@ public class CharacterFacadeIT {
     public void testSearchByName() {
         System.out.println("searchByName");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
+        Player player1 = new Player("Nikolaj", "Hamster16");
+        Character character = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        player1.addCharacter(character);
+        CharacterDTO characterDTO = new CharacterDTO(character);
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
         List<CharacterDTO> result = facade.searchByName("Damascus");
-        assertEquals(expResult.get(0),result.get(0));
+        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
     }
     @Test
     public void testSearchByRace() {
         System.out.println("searchByRace");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
+        Player player1 = new Player("Nikolaj", "Hamster16");
+        Character character = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        player1.addCharacter(character);
+        CharacterDTO characterDTO = new CharacterDTO(character);
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
         List<CharacterDTO> result = facade.searchByRace("orc");
-        assertEquals(expResult.get(0),result.get(0));
+       assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
     }
     @Test
     public void testSearchByPlayer() {
         System.out.println("searchByPlayer");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
-        String playerName = "Nikolaj";
+        Player player1 = new Player("Nikolaj", "Hamster16");
+        Character character = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        player1.addCharacter(character);
+        CharacterDTO characterDTO = new CharacterDTO(character);
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
-        List<CharacterDTO> result = facade.searchByPlayer(playerName);
-        assertEquals(expResult.get(0),result.get(0));
+        List<CharacterDTO> result = facade.searchByPlayer(player1.getUserName());
+        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
     }
 
 }
