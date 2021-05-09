@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -38,6 +40,8 @@ public class Character implements Serializable {
     private String classs;
     @OneToOne(cascade = CascadeType.PERSIST)
     private AbillityScores abillityScores;
+    @ManyToOne
+    private Player player;
     
 
     public Character(Integer lvl,Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
@@ -140,6 +144,17 @@ public class Character implements Serializable {
     public void setAbillityScores(AbillityScores abillityScores) {
         this.abillityScores = abillityScores;
     }
+
+    public void setPlayer(Player player) {
+        if(player != null){
+        this.player = player;
+        }
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+    
 
     @Override
     public String toString() {

@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 
 /**
@@ -19,6 +20,7 @@ import javax.persistence.OneToOne;
  * @author SJUBE
  */
 @Entity
+@Table(name = "abillityscores")
 public class AbillityScores implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +33,7 @@ public class AbillityScores implements Serializable {
     private Integer wisdom;
     private Integer intelligence;
     private Integer charisma;
-    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "abillityScores")
+    @OneToOne(mappedBy = "abillityScores")
     private Character character;
 
         public AbillityScores( Integer strength, Integer dexterity, Integer constitution, Integer wisdom, Integer intelligence, Integer charisma) {
@@ -41,6 +43,7 @@ public class AbillityScores implements Serializable {
         this.wisdom = wisdom;
         this.intelligence = intelligence;
         this.charisma = charisma;
+ 
     }
 
     public AbillityScores() {
@@ -97,6 +100,11 @@ public class AbillityScores implements Serializable {
 
     public void setCharisma(Integer charisma) {
         this.charisma = charisma;
+    }
+
+    public void setCharacter(Character character) {
+        this.character = character;
+        character.setAbillityScores(this);
     }
 
     @Override
