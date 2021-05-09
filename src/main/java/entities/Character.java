@@ -146,9 +146,15 @@ public class Character implements Serializable {
     }
 
     public void setPlayer(Player player) {
+        if(player != null){
         this.player = player;
+        }
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+    
 
     @Override
     public String toString() {

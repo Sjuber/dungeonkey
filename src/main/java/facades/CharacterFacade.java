@@ -61,7 +61,7 @@ public class CharacterFacade {
     
     public List<CharacterDTO> searchByName(String characterName){
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> character = em.createQuery("SELECT c FROM Characters c WHERE c.name = :name", Character.class);
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class);
         character.setParameter("name", characterName);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -71,7 +71,7 @@ public class CharacterFacade {
     
     public List<CharacterDTO> searchByRace(String characterRace){
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> character = em.createQuery("SELECT c FROM Characters c WHERE c.race = :race", Character.class);
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.race =:race", Character.class);
         character.setParameter("race", characterRace);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -92,7 +92,7 @@ public class CharacterFacade {
     
     public List<CharacterDTO> searchByPlayer(String playerName){
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player play WHERE play.name =:playername", Character.class);
+        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class);
         query.setParameter("playername", playerName);
         List<Character> resultlist = query.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
