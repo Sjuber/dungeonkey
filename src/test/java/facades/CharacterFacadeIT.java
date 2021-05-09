@@ -20,7 +20,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
-
+@Disabled
 public class CharacterFacadeIT {
 
     private static EntityManagerFactory emf;
