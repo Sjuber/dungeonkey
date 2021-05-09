@@ -28,8 +28,8 @@ public class CharacterResource {
     @Path("{characterid}/abillityscores")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getASByCharacter(@PathParam("characterid") int characterID) {
-        AbillityScoresDTO asdto = facade.getASByCharacter(characterID);
+    public String getASByCharacter(@PathParam("characterid") String characterID) {
+        AbillityScoresDTO asdto = facade.getASByCharacter(Integer.valueOf(characterID));
         return GSON.toJson(asdto);
     }
     @Path("greetings")
@@ -43,9 +43,9 @@ public class CharacterResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateASSetByCharacter(@PathParam("characterid") int characterID, String abillitySet) {
+    public String updateASSetByCharacter(@PathParam("characterid") String characterID, String abillitySet) {
         AbillityScoresDTO aSDTO = new AbillityScoresDTO(GSON.fromJson(abillitySet, AbillityScores.class));
-        CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO,characterID);
+        CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO,Integer.valueOf(characterID));
         return GSON.toJson(cdtoUpdated);
     }
     

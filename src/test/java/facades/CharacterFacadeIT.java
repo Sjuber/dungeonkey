@@ -15,10 +15,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import utils.EMF_Creator;
 import entities.Character;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
-
+@Disabled
 public class CharacterFacadeIT {
 
     private static EntityManagerFactory emf;
@@ -62,7 +64,7 @@ public class CharacterFacadeIT {
             player1.addRole(playerRole);
             DM.addRole(DMRole);
             player2.addRole(playerRole);
-            //both.addRole(DMRole);
+            //both.addRole(DMRole); // MAN KAN GODT HAVE BEGGE ROLLER CATHRINE !!!
             em.persist(playerRole);
             em.persist(DMRole);
             em.persist(player1);
@@ -71,7 +73,6 @@ public class CharacterFacadeIT {
             em.persist(DM);
             em.persist(player2);
             em.getTransaction().commit();
-            System.out.println("Jeg er her nu");
         } finally {
             em.close();
         }
@@ -111,6 +112,38 @@ public class CharacterFacadeIT {
         AbillityScoresDTO expResult = new AbillityScoresDTO(new AbillityScores(18, 8, 14, 12, 14, 10));
         AbillityScoresDTO result = facade.getASByCharacter(characterID);
         assertEquals(expResult.getStrength(), result.getStrength());
+    }
+    
+    @Test
+    public void testSearchByName() {
+        System.out.println("searchByName");
+        AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
+        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
+        List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
+        expResult.add(characterDTO);
+        List<CharacterDTO> result = facade.searchByName("Damascus");
+        assertEquals(expResult.get(0),result.get(0));
+    }
+    @Test
+    public void testSearchByRace() {
+        System.out.println("searchByRace");
+        AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
+        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
+        List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
+        expResult.add(characterDTO);
+        List<CharacterDTO> result = facade.searchByRace("orc");
+        assertEquals(expResult.get(0),result.get(0));
+    }
+    @Test
+    public void testSearchByPlayer() {
+        System.out.println("searchByPlayer");
+        AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
+        CharacterDTO characterDTO = new CharacterDTO(new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1));
+        String playerName = "Nikolaj";
+        List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
+        expResult.add(characterDTO);
+        List<CharacterDTO> result = facade.searchByPlayer(playerName);
+        assertEquals(expResult.get(0),result.get(0));
     }
 
 }

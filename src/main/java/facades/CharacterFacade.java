@@ -7,6 +7,9 @@ import entities.AbillityScores;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import entities.Character;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.TypedQuery;
 
 public class CharacterFacade {
     
@@ -54,6 +57,46 @@ public class CharacterFacade {
             em.close();
         }
         return new AbillityScoresDTO(character.getAbillityScores());
+    }
+    
+    public List<CharacterDTO> searchByName(String characterName){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Characters c WHERE c.name = :name", Character.class);
+        character.setParameter("name", characterName);
+        List<Character> resultlist = character.getResultList();
+        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+        
+        return resultAsDTO;
+    }
+    
+    public List<CharacterDTO> searchByRace(String characterRace){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Characters c WHERE c.race = :race", Character.class);
+        character.setParameter("race", characterRace);
+        List<Character> resultlist = character.getResultList();
+        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+        
+        return resultAsDTO;
+    }
+    
+    //TODO//WORK IN PROGRESS, SEARCH BY ITEM
+    
+//    public List<CharacterDTO> searchByItem(String itemName){
+//        EntityManager em = emf.createEntityManager();
+//        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.items item WHERE item.name =:itemname", Character.class);
+//        query.setParameter("itemname", itemName);
+//        List<Character> resultlist = query.getResultList();
+//        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+//        return resultAsDTO;
+//    }
+    
+    public List<CharacterDTO> searchByPlayer(String playerName){
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player play WHERE play.name =:playername", Character.class);
+        query.setParameter("playername", playerName);
+        List<Character> resultlist = query.getResultList();
+        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+        return resultAsDTO;
     }
     
 }
