@@ -1,11 +1,14 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 
@@ -20,13 +23,14 @@ public class Equipment implements Serializable {
     private String name;
     private int qty;
     private double weight;
-    @ManyToMany
-    private Inventory inventory;
+    @ManyToMany(mappedBy = "equipments")
+    private List<Inventory> inventories;
 
     public Equipment(String name, int qty, double weight) {
         this.name = name;
         this.qty = qty;
         this.weight = weight;
+        inventories = new ArrayList<>();
     }
 
     public Equipment() {
