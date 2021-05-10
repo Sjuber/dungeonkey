@@ -101,4 +101,10 @@ public class Player implements Serializable {
         }
     }
 
+    public List<Character> getCharacterList() {
+        return characterList;
+    }
+    
+    
+
 }

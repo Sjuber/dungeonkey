@@ -9,10 +9,12 @@ public class CharacterDTO {
 
     private AbillityScoresDTO abilityScoreDTO;
     private PlayerDTO playerDTO;
+    private InventoryDTO inventoryDTO;
     
     public CharacterDTO(Character character) {
         this.abilityScoreDTO = new AbillityScoresDTO(character.getAbillityScores());
         this.playerDTO = new PlayerDTO(character.getPlayer());
+        this.inventoryDTO = new InventoryDTO(character.getInventory());
     }  
 
     public AbillityScoresDTO getAbilityScoreDTO() {
@@ -28,6 +30,12 @@ public class CharacterDTO {
         characters.forEach(character->cdtos.add(new CharacterDTO(character)));
         return cdtos;
     }
+
+    public InventoryDTO getInventoryDTO() {
+        return inventoryDTO;
+    }
+    
+    
     
     
 }

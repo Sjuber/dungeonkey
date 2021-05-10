@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
+import dtos.EquipmentDTO;
 import entities.AbillityScores;
 import facades.CharacterFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -44,6 +46,16 @@ public class CharacterResource {
     public String updateASSetByCharacter(@PathParam("characterid") String characterID, String abillitySet) {
         AbillityScoresDTO aSDTO = new AbillityScoresDTO(GSON.fromJson(abillitySet, AbillityScores.class));
         CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
+        return GSON.toJson(cdtoUpdated);
+    }
+    
+    @Path("{characterid}/inventory")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String addEquipmentForCharactersInventory(@PathParam("characterid") String characterID, String equipment, int quantity) {
+        EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
+        CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(Integer.getInteger(characterID),equipmentDTO, quantity);
         return GSON.toJson(cdtoUpdated);
     }
 

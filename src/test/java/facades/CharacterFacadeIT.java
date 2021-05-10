@@ -2,6 +2,7 @@ package facades;
 
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
+import dtos.EquipmentDTO;
 import entities.AbillityScores;
 import entities.Player;
 import entities.Role;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import utils.EMF_Creator;
 import entities.Character;
+import entities.Equipment;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -47,6 +49,7 @@ public class CharacterFacadeIT {
             emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
+            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.getTransaction().commit();
         } finally {
             emDelete.close();
@@ -115,6 +118,21 @@ public class CharacterFacadeIT {
     }
     
     @Test
+    public void adjustCharactersInventory(){
+        System.out.println("adjustCharactersInventory");
+        int qty = 1;
+         Equipment equipment = new Equipment("Helm Of Glory", qty, 1.5); 
+        EquipmentDTO edto = new EquipmentDTO(equipment);
+       String userName = "Nikolaj";
+       EntityManager em = emf.createEntityManager();
+        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:username", Player.class);
+        playerQuery.setParameter("username", userName);
+        CharacterDTO result = facade.adjustCharactersInventory(playerQuery.getSingleResult().getCharacterList().get(0).getId(), edto, qty);
+        int expected = 2;
+        assertTrue(result.getInventoryDTO().getEquipmentsDTOQty().entrySet().size() == expected);
+    }
+    
+    @Test
     public void testSearchByName() {
         System.out.println("searchByName");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
@@ -153,5 +171,7 @@ public class CharacterFacadeIT {
         List<CharacterDTO> result = facade.searchByPlayer(player1.getUserName());
         assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
     }
+    
+    
 
 }

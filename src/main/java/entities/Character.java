@@ -57,6 +57,7 @@ public class Character implements Serializable {
         this.race = race;
         this.classs = classs;
         this.abillityScores = abillityScores;
+        this.inventory = new Inventory();
     }
 
     public Character() {

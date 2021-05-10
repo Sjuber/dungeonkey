@@ -16,6 +16,10 @@ public class InventoryDTO {
             equipmentsDTOQty.put(new EquipmentDTO(e.getKey()),e.getValue());
         }
     }
+
+    public TreeMap<EquipmentDTO, Integer> getEquipmentsDTOQty() {
+        return equipmentsDTOQty;
+    }
     
     
 }

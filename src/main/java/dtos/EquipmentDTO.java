@@ -13,6 +13,18 @@ public class EquipmentDTO {
         this.qty = equipment.getQty();
         this.weight = equipment.getWeight();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
     
     
 }
