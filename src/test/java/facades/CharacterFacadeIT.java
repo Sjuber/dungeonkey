@@ -46,10 +46,10 @@ public class CharacterFacadeIT {
         EntityManager emDelete = emf.createEntityManager();
         try {
             emDelete.getTransaction().begin();
+            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
-            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.getTransaction().commit();
         } finally {
             emDelete.close();
