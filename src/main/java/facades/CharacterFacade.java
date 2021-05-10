@@ -1,4 +1,3 @@
-
 package facades;
 
 import dtos.AbillityScoresDTO;
@@ -7,15 +6,16 @@ import entities.AbillityScores;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import entities.Character;
+import entities.Player;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
 
 public class CharacterFacade {
-    
+
     public static CharacterFacade instance;
     public static EntityManagerFactory emf;
-    
+
     public static CharacterFacade getCharacterFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
@@ -23,11 +23,11 @@ public class CharacterFacade {
         }
         return instance;
     }
-    
-    public static CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID){
+
+    public static CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) {
         EntityManager em = emf.createEntityManager();
         Character dbCharacter;
-         try {
+        try {
             em.getTransaction().begin();
             dbCharacter = em.find(Character.class, characterID);
             AbillityScores aSFromDB = em.find(AbillityScores.class, dbCharacter.getAbillityScores().getId());
@@ -44,7 +44,19 @@ public class CharacterFacade {
             em.close();
         }
         return new CharacterDTO(dbCharacter);
-    }    
+    }
+
+    public CharacterDTO createCharacter(CharacterDTO chDTO) {
+        EntityManager em = emf.createEntityManager();
+        AbillityScoresDTO abisc = chDTO.getAbilityScoreDTO();
+        
+        
+        Character ch = new Character(chDTO.getLevl(), chDTO.getMaxHp(), chDTO.getCurrentHP(), chDTO.getAc(), chDTO.getSpeed(), chDTO.getName(), chDTO.getBiography(), chDTO.getRace(), chDTO.getClasss(), chDTO.getAbilityScoreDTO().getDtos(abisc));
+        em.getTransaction().begin();
+        em.persist(ch);
+        em.getTransaction().commit();
+        return new CharacterDTO(ch);
+    }
 
     public AbillityScoresDTO getASByCharacter(int characterID) {
         EntityManager em = emf.createEntityManager();
@@ -58,29 +70,28 @@ public class CharacterFacade {
         }
         return new AbillityScoresDTO(character.getAbillityScores());
     }
-    
-    public List<CharacterDTO> searchByName(String characterName){
+
+    public List<CharacterDTO> searchByName(String characterName) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class);
         character.setParameter("name", characterName);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
-        
+
         return resultAsDTO;
     }
-    
-    public List<CharacterDTO> searchByRace(String characterRace){
+
+    public List<CharacterDTO> searchByRace(String characterRace) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.race =:race", Character.class);
         character.setParameter("race", characterRace);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
-        
+
         return resultAsDTO;
     }
-    
+
     //TODO//WORK IN PROGRESS, SEARCH BY ITEM
-    
 //    public List<CharacterDTO> searchByItem(String itemName){
 //        EntityManager em = emf.createEntityManager();
 //        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.items item WHERE item.name =:itemname", Character.class);
@@ -89,8 +100,7 @@ public class CharacterFacade {
 //        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
 //        return resultAsDTO;
 //    }
-    
-    public List<CharacterDTO> searchByPlayer(String playerName){
+    public List<CharacterDTO> searchByPlayer(String playerName) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class);
         query.setParameter("playername", playerName);
@@ -98,5 +108,5 @@ public class CharacterFacade {
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
         return resultAsDTO;
     }
-    
+
 }
