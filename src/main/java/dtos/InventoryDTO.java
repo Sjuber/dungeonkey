@@ -3,22 +3,25 @@ package dtos;
 
 import entities.Equipment;
 import entities.Inventory;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 
 public class InventoryDTO {
     
-    private TreeMap<String, Integer> equipmentsDTOQty = new TreeMap<>();
+    private List<EquipmentDTO> equipmentsDTO;
 
     public InventoryDTO(Inventory inventory) {
-        for (Map.Entry<String, Integer> e : inventory.getEquipmentsNQty().entrySet()) {
-            equipmentsDTOQty.put(e.getKey(),e.getValue());
-        }
+        equipmentsDTO = new ArrayList<>();
+        inventory.getEquipments().forEach(e -> 
+                {equipmentsDTO.add(new EquipmentDTO(e));
+                });
     }
 
-    public TreeMap<String, Integer> getEquipmentsDTOQty() {
-        return equipmentsDTOQty;
+    public List<EquipmentDTO> getEquipmentsDTOQty() {
+        return equipmentsDTO;
     }
     
     

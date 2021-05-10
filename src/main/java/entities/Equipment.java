@@ -3,11 +3,10 @@ package entities;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -21,6 +20,8 @@ public class Equipment implements Serializable {
     private String name;
     private int qty;
     private double weight;
+    @ManyToMany
+    private Inventory inventory;
 
     public Equipment(String name, int qty, double weight) {
         this.name = name;

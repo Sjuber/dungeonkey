@@ -129,7 +129,7 @@ public class CharacterFacadeIT {
         playerQuery.setParameter("username", userName);
         CharacterDTO result = facade.adjustCharactersInventory(playerQuery.getSingleResult().getCharacterList().get(0).getId(), edto, qty);
         int expected = 2;
-        assertTrue(result.getInventoryDTO().getEquipmentsDTOQty().entrySet().size() == expected);
+        assertTrue(result.getInventoryDTO().getEquipmentsDTOQty().size() == expected);
     }
     
     @Test
