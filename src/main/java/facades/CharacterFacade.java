@@ -98,5 +98,18 @@ public class CharacterFacade {
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
         return resultAsDTO;
     }
+    public String updateHP(int newHPValue, int CharacterId){
+        EntityManager em = emf.createEntityManager();
+        try{
+        Character character = em.find(Character.class, CharacterId);
+        character.setCurrentHP(newHPValue);
+        em.persist(character);
+        }
+        finally{
+            em.close();
+        }
+        return newHPValue + "";
+        
+    }
     
 }
