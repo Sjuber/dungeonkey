@@ -40,15 +40,25 @@ public class CharacterResource {
         return GSON.toJson(asdto);
     }
 
-    @Path("createcharacter")
     @POST
+    @Path("createcharacter/{playerid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createCharacter(String json) {
+    public String createCharacter(@PathParam("playerid") String playerid, String json) {
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOPersisted = facade.createCharacter(chaDTO, playerid);
+        return GSON.toJson(chaDTOPersisted);
+    }
 
-        CharacterDTO persistedCharacter = facade.createCharacter(GSON.fromJson(json, CharacterDTO.class));
-        return GSON.toJson(persistedCharacter);
-
+    @PUT
+    @Path("updatecharacter/{characterID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateCharacter(@PathParam("characterID") int characterID, String json) throws Exception {
+        System.out.println(json);
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOUpdated = facade.updateCharacter(chaDTO, characterID);
+        return GSON.toJson(chaDTOUpdated);
     }
 
     @Path("{characterid}/abillityscores")

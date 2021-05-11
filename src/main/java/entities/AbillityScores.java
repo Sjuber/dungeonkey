@@ -43,7 +43,6 @@ public class AbillityScores implements Serializable {
         this.wisdom = wisdom;
         this.intelligence = intelligence;
         this.charisma = charisma;
- 
     }
 
     public AbillityScores() {

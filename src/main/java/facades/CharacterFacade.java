@@ -46,16 +46,54 @@ public class CharacterFacade {
         return new CharacterDTO(dbCharacter);
     }
 
-    public CharacterDTO createCharacter(CharacterDTO chDTO) {
+    public CharacterDTO createCharacter(CharacterDTO chDTO, String playerId) {
         EntityManager em = emf.createEntityManager();
         AbillityScoresDTO abisc = chDTO.getAbilityScoreDTO();
-        
-        
-        Character ch = new Character(chDTO.getLevl(), chDTO.getMaxHp(), chDTO.getCurrentHP(), chDTO.getAc(), chDTO.getSpeed(), chDTO.getName(), chDTO.getBiography(), chDTO.getRace(), chDTO.getClasss(), chDTO.getAbilityScoreDTO().getDtos(abisc));
+        AbillityScores abiscR = new AbillityScores(abisc.getStrength(), abisc.getDexterity(), abisc.getConstitution(), abisc.getWisdom(), abisc.getIntelligence(), abisc.getCharisma());
+//        AbillityScores abiscR = new AbillityScores(10, 10, 10, 10, 10, 10);
+
+        Player dbPlayer = em.find(Player.class, playerId);
+
+        Character ch = new Character(chDTO.getLevl(), chDTO.getMaxHp(), chDTO.getCurrentHP(), chDTO.getAc(), chDTO.getSpeed(), chDTO.getName(), chDTO.getBiography(), chDTO.getRace(), chDTO.getClasss(), abiscR);
+        dbPlayer.addCharacter(ch);
         em.getTransaction().begin();
         em.persist(ch);
         em.getTransaction().commit();
         return new CharacterDTO(ch);
+    }
+
+    public CharacterDTO updateCharacter(CharacterDTO chaDTONeo, int characterID) throws Exception {
+        EntityManager em = emf.createEntityManager();
+        Character asFromDB;
+        try {
+            em.getTransaction().begin();
+            asFromDB = em.find(Character.class, characterID);
+            if (asFromDB == null) {
+                throw new Exception("The character is not in the database");
+            }
+            int str = chaDTONeo.getAbilityScoreDTO().getStrength();
+            int dex = chaDTONeo.getAbilityScoreDTO().getDexterity();
+            int con = chaDTONeo.getAbilityScoreDTO().getConstitution();
+            int wis = chaDTONeo.getAbilityScoreDTO().getWisdom();
+            int inte = chaDTONeo.getAbilityScoreDTO().getIntelligence();
+            int cha = chaDTONeo.getAbilityScoreDTO().getCharisma();
+            AbillityScores abS = new AbillityScores(str, dex, con, wis, inte, cha);
+            asFromDB.setAbillityScores(abS);
+            asFromDB.setLvl(chaDTONeo.getLevl());
+            asFromDB.setMaxHP(chaDTONeo.getMaxHp());
+            asFromDB.setCurrentHP(chaDTONeo.getCurrentHP());
+            asFromDB.setAc(chaDTONeo.getAc());
+            asFromDB.setSpeed(chaDTONeo.getSpeed());
+            asFromDB.setName(chaDTONeo.getName());
+            asFromDB.setBiography(chaDTONeo.getBiography());
+            asFromDB.setRace(chaDTONeo.getRace());
+            asFromDB.setClasss(chaDTONeo.getClasss());
+            em.merge(asFromDB);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new CharacterDTO(asFromDB);
     }
 
     public AbillityScoresDTO getASByCharacter(int characterID) {

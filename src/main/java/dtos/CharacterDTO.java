@@ -23,6 +23,7 @@ public class CharacterDTO {
     private String classs;
 
     public CharacterDTO(Character ch) {
+        this.levl = ch.getLvl();
         this.abilityScoreDTO = new AbillityScoresDTO(ch.getAbillityScores());
         this.playerDTO = new PlayerDTO(ch.getPlayer());
         this.maxHp = ch.getMaxHP();
@@ -33,6 +34,11 @@ public class CharacterDTO {
         this.biography = ch.getBiography();
         this.race = ch.getRace();
         this.classs = ch.getClasss();
+    }
+
+    
+    
+    public CharacterDTO() {
     }
 
     /*public int getId() {
@@ -88,6 +94,24 @@ public class CharacterDTO {
         List<CharacterDTO> cdtos = new ArrayList();
         characters.forEach(character -> cdtos.add(new CharacterDTO(character)));
         return cdtos;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CharacterDTO{levl=").append(levl);
+        sb.append(", abilityScoreDTO=").append(abilityScoreDTO);
+        sb.append(", playerDTO=").append(playerDTO);
+        sb.append(", maxHp=").append(maxHp);
+        sb.append(", currentHP=").append(currentHP);
+        sb.append(", ac=").append(ac);
+        sb.append(", speed=").append(speed);
+        sb.append(", name=").append(name);
+        sb.append(", biography=").append(biography);
+        sb.append(", race=").append(race);
+        sb.append(", classs=").append(classs);
+        sb.append('}');
+        return sb.toString();
     }
     
 

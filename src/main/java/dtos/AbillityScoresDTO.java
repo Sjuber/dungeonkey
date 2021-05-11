@@ -24,6 +24,10 @@ public class AbillityScoresDTO {
         this.charisma = abilityScores.getCharisma();
     }
 
+    public AbillityScoresDTO() {
+    }
+    
+
     public Integer getStrength() {
         return strength;
     }
@@ -51,6 +55,19 @@ public class AbillityScoresDTO {
     public AbillityScores getDtos(AbillityScoresDTO abiScores) {
         AbillityScores abiScor = new AbillityScores(abiScores.getStrength(), abiScores.getDexterity(), abiScores.getConstitution(), abiScores.getWisdom(), abiScores.getIntelligence(), abiScores.getCharisma());
         return abiScor;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("AbillityScoresDTO{strength=").append(strength);
+        sb.append(", dexterity=").append(dexterity);
+        sb.append(", constitution=").append(constitution);
+        sb.append(", wisdom=").append(wisdom);
+        sb.append(", intelligence=").append(intelligence);
+        sb.append(", charisma=").append(charisma);
+        sb.append('}');
+        return sb.toString();
     }
 
 }
