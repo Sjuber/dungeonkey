@@ -58,5 +58,13 @@ public class CharacterResource {
         CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(Integer.getInteger(characterID),equipmentDTO, quantity);
         return GSON.toJson(cdtoUpdated);
     }
+    
+    @Path("inventory/{equipmentname}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getEquipmentForCharactersInventory(@PathParam("equipmentname") String equipmentName) throws Exception {
+        EquipmentDTO equipmentDTO = facade.getEquipment(equipmentName);
+        return GSON.toJson(equipmentDTO);
+    }
 
 }

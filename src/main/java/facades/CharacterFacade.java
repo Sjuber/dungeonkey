@@ -113,4 +113,19 @@ public class CharacterFacade {
         return resultAsDTO;
     }
 
+    public EquipmentDTO getEquipment(String equipmentName) throws Exception {
+        EntityManager em = emf.createEntityManager();
+        Equipment equipment = null;
+        try {
+        em.getTransaction().begin();
+        equipment = em.find(Equipment.class, equipmentName);
+        }finally{
+            em.close();
+        }
+        if(equipment==null){
+            throw new Exception("There is no such equipment with the given name");
+        }
+        return new EquipmentDTO(equipment);
+    }
+
 }

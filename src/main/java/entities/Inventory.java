@@ -3,7 +3,6 @@ package entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,16 +16,14 @@ public class Inventory implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
     @ManyToMany
-    @JoinColumn(name = "inventories")
+    @JoinColumn(name = "inventories_equipments")
     private List<Equipment> equipments;
-    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "inventory")
+    @OneToOne(mappedBy = "inventory")
     private Character character;
 
-    
-    
     public Inventory() {
         this.equipments = new ArrayList<>();
     }

@@ -70,10 +70,10 @@ public class CharacterFacadeIT {
             //both.addRole(DMRole); // MAN KAN GODT HAVE BEGGE ROLLER CATHRINE !!!
             em.persist(playerRole);
             em.persist(DMRole);
-            em.persist(player1);
             em.persist(equipment);
             player1.addCharacter(ch1);
-            em.merge(player1);
+            em.persist(ch1);
+            em.persist(player1);
             em.persist(DM);
             em.persist(player2);
             em.getTransaction().commit();

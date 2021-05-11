@@ -26,7 +26,7 @@ public class CharacterDTO {
     }
    
     public static List<CharacterDTO> getDtos(List<Character> characters){
-        List<CharacterDTO> cdtos = new ArrayList();
+        List<CharacterDTO> cdtos = new ArrayList<>();
         characters.forEach(character->cdtos.add(new CharacterDTO(character)));
         return cdtos;
     }

@@ -62,6 +62,8 @@ public class Character implements Serializable {
     }
 
     public Character() {
+    this.inventory = new Inventory();
+        this.inventory.setCharacter(this);
     }
 
     public Integer getLvl() {
@@ -146,7 +148,10 @@ public class Character implements Serializable {
     }
 
     public void setAbillityScores(AbillityScores abillityScores) {
+        if(abillityScores!=null){
         this.abillityScores = abillityScores;
+        abillityScores.setCharacter(this);
+        }
     }
 
     public void setPlayer(Player player) {
