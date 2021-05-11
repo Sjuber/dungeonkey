@@ -5,10 +5,13 @@ import com.google.gson.GsonBuilder;
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
 import entities.AbillityScores;
+import entities.Character;
 import facades.CharacterFacade;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,6 +40,27 @@ public class CharacterResource {
         return GSON.toJson(asdto);
     }
 
+    @POST
+    @Path("createcharacter/{playerid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createCharacter(@PathParam("playerid") String playerid, String json) {
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOPersisted = facade.createCharacter(chaDTO, playerid);
+        return GSON.toJson(chaDTOPersisted);
+    }
+
+    @PUT
+    @Path("updatecharacter/{characterID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateCharacter(@PathParam("characterID") int characterID, String json) throws Exception {
+        System.out.println(json);
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOUpdated = facade.updateCharacter(chaDTO, characterID);
+        return GSON.toJson(chaDTOUpdated);
+    }
+
     @Path("{characterid}/abillityscores")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +69,30 @@ public class CharacterResource {
         AbillityScoresDTO aSDTO = new AbillityScoresDTO(GSON.fromJson(abillitySet, AbillityScores.class));
         CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
         return GSON.toJson(cdtoUpdated);
+    }
+
+    @Path("searchbyrace/{race}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByRace(@PathParam("race") String race) {
+        List<CharacterDTO> chDTO = facade.searchByRace(race);
+        return GSON.toJson(chDTO);
+    }
+
+    @Path("searchbyname/{name}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByName(@PathParam("name") String name) {
+        List<CharacterDTO> chDTO = facade.searchByName(name);
+        return GSON.toJson(chDTO);
+    }
+
+    @Path("searchbyplayer/{player}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByPlayer(@PathParam("player") String player) {
+        List<CharacterDTO> chDTO = facade.searchByPlayer(player);
+        return GSON.toJson(chDTO);
     }
 
 }

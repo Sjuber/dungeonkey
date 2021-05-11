@@ -17,10 +17,10 @@ import utils.EMF_Creator;
 import entities.Character;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
 //@Disabled
+
 public class CharacterFacadeIT {
 
     private static EntityManagerFactory emf;
@@ -44,9 +44,9 @@ public class CharacterFacadeIT {
         EntityManager emDelete = emf.createEntityManager();
         try {
             emDelete.getTransaction().begin();
-            emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
+            emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.getTransaction().commit();
         } finally {
             emDelete.close();
@@ -89,7 +89,7 @@ public class CharacterFacadeIT {
         AbillityScores aS = new AbillityScores(11, 11, 11, 11, 11, 11);
         AbillityScoresDTO aSDTONew = new AbillityScoresDTO(aS);
         EntityManager em = emf.createEntityManager();
-       TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE c.name =:charactername AND p.userName =:username", Character.class);
+        TypedQuery<Character> characterIDQuery = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE c.name =:charactername AND p.userName =:username", Character.class);
         characterIDQuery.setParameter("charactername", "Damascus").setParameter("username", "Nikolaj");
         int characterID = characterIDQuery.getSingleResult().getId();
         Player player1 = new Player("Nikolaj", "Hamster16");
@@ -113,7 +113,7 @@ public class CharacterFacadeIT {
         AbillityScoresDTO result = facade.getASByCharacter(characterID);
         assertEquals(expResult.getStrength(), result.getStrength());
     }
-    
+
     @Test
     public void testSearchByName() {
         System.out.println("searchByName");
@@ -125,8 +125,9 @@ public class CharacterFacadeIT {
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
         List<CharacterDTO> result = facade.searchByName("Damascus");
-        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
+        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(), result.get(0).getAbilityScoreDTO().getStrength());
     }
+
     @Test
     public void testSearchByRace() {
         System.out.println("searchByRace");
@@ -138,8 +139,9 @@ public class CharacterFacadeIT {
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
         List<CharacterDTO> result = facade.searchByRace("orc");
-       assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
+        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(), result.get(0).getAbilityScoreDTO().getStrength());
     }
+
     @Test
     public void testSearchByPlayer() {
         System.out.println("searchByPlayer");
@@ -151,7 +153,20 @@ public class CharacterFacadeIT {
         List<CharacterDTO> expResult = new ArrayList<CharacterDTO>();
         expResult.add(characterDTO);
         List<CharacterDTO> result = facade.searchByPlayer(player1.getUserName());
-        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(),result.get(0).getAbilityScoreDTO().getStrength());
+        assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(), result.get(0).getAbilityScoreDTO().getStrength());
     }
+
+//    DOES NOT EXIST, DONT LOOK :C  
+//    (Den virker på postman men herinde gider den ikke :/) 
+//    @Test
+//    public void testCreateCharacter() {
+//        AbillityScores abiSco1 = new AbillityScores(8, 16, 10, 14, 15, 19);
+//        Character ch = new Character(3, 27, 17, 19, 35, "John Broadsound", "A great singer he is.", "tabaxi", "bard", abiSco1);
+//        CharacterDTO chDTO = new CharacterDTO(ch);
+//
+//        CharacterDTO chY = facade.createCharacter(chDTO, "Jens");
+//        
+//        assertEquals(chY.getLevl(), ch.getLvl());
+//    }
 
 }

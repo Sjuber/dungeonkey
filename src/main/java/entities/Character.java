@@ -148,6 +148,8 @@ public class Character implements Serializable {
     public void setPlayer(Player player) {
         if(player != null){
         this.player = player;
+     
+        
         }
     }
 
