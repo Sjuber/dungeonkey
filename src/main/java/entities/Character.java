@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -42,9 +44,11 @@ public class Character implements Serializable {
     private AbillityScores abillityScores;
     @ManyToOne
     private Player player;
-    @OneToOne(cascade = CascadeType.PERSIST)
-    private Inventory inventory;
-    
+//    @OneToOne(cascade = CascadeType.PERSIST)
+//    private Inventory inventory;
+    @ManyToMany
+    @JoinColumn(name = "inventory")
+    private List<Equipment> equipments = new ArrayList<>();
 
     public Character(Integer lvl,Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
         this.lvl = lvl;
@@ -57,13 +61,13 @@ public class Character implements Serializable {
         this.race = race;
         this.classs = classs;
         this.abillityScores = abillityScores;
-        this.inventory = new Inventory();
-        this.inventory.setCharacter(this);
+//        this.inventory = new Inventory();
+//        this.inventory.setCharacter(this);
     }
 
     public Character() {
-    this.inventory = new Inventory();
-        this.inventory.setCharacter(this);
+//    this.inventory = new Inventory();
+//        this.inventory.setCharacter(this);
     }
 
     public Integer getLvl() {
@@ -164,13 +168,19 @@ public class Character implements Serializable {
         return player;
     }
 
-    public Inventory getInventory() {
-        return inventory;
-    }
+//    public Inventory getInventory() {
+//        return inventory;
+//    }
+//
+//    public void setInventory(Inventory inventory) {
+//        this.inventory = inventory;
+//    }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public List<Equipment> getEquipments() {
+        return equipments;
     }
+    
+    
    
     @Override
     public String toString() {

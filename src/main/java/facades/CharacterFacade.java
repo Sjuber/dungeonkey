@@ -66,7 +66,7 @@ public class CharacterFacade {
         try {
             em.getTransaction().begin();
             character = em.find(Character.class, characterID);
-            character.getInventory().adjustEquipmentAndQty(equipment, equipment.getQty());
+            //character.getInventory().adjustEquipmentAndQty(equipment, equipment.getQty());
             em.merge(character);
             em.getTransaction().commit();
         } finally {

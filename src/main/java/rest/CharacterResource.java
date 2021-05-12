@@ -55,7 +55,7 @@ public class CharacterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String addEquipmentForCharactersInventory(@PathParam("characterid") int characterID, String equipment) {
-        EquipmentDTO equipmentDTO = new EquipmentDTO(GSON.fromJson(equipment, Equipment.class));
+        EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
         CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(characterID, equipmentDTO);
         return GSON.toJson(cdtoUpdated);
     }
@@ -63,7 +63,7 @@ public class CharacterResource {
     @Path("inventory/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipmentForCharactersInventory(@PathParam("equipmentname") String equipmentName) throws Exception {
+    public String getEquipment(@PathParam("equipmentname") String equipmentName) throws Exception {
         EquipmentDTO equipmentDTO = facade.getEquipment(equipmentName);
         return GSON.toJson(equipmentDTO);
     }
