@@ -11,6 +11,9 @@ class PlayerDTO {
     public PlayerDTO(Player player) {
         username = player.getUserName();
     }
+
+    public PlayerDTO() {
+    }
     
     
 }
