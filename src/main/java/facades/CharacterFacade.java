@@ -59,14 +59,14 @@ public class CharacterFacade {
         return new AbillityScoresDTO(character.getAbillityScores());
     }
 
-    public CharacterDTO adjustCharactersInventory(int characterID, EquipmentDTO equipmentDTO, int qtyForGivenEqip) {
+    public CharacterDTO adjustCharactersInventory(int characterID, EquipmentDTO equipmentDTO) {
         EntityManager em = emf.createEntityManager();
         Character character;
         Equipment equipment = new Equipment(equipmentDTO.getName(), equipmentDTO.getQty(), equipmentDTO.getWeight());
         try {
             em.getTransaction().begin();
             character = em.find(Character.class, characterID);
-            character.getInventory().adjustEquipmentAndQty(equipment, qtyForGivenEqip);
+            character.getInventory().adjustEquipmentAndQty(equipment, equipment.getQty());
             em.merge(character);
             em.getTransaction().commit();
         } finally {

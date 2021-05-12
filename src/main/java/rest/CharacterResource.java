@@ -6,6 +6,7 @@ import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
 import dtos.EquipmentDTO;
 import entities.AbillityScores;
+import entities.Equipment;
 import facades.CharacterFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -50,15 +51,15 @@ public class CharacterResource {
     }
     
     @Path("{characterid}/inventory")
-    @POST
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String addEquipmentForCharactersInventory(@PathParam("characterid") String characterID, String equipment, int quantity) {
-        EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
-        CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(Integer.getInteger(characterID),equipmentDTO, quantity);
+    public String addEquipmentForCharactersInventory(@PathParam("characterid") int characterID, String equipment) {
+        EquipmentDTO equipmentDTO = new EquipmentDTO(GSON.fromJson(equipment, Equipment.class));
+        CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(characterID, equipmentDTO);
         return GSON.toJson(cdtoUpdated);
     }
-    
+
     @Path("inventory/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

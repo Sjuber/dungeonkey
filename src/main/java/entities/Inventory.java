@@ -32,7 +32,8 @@ public class Inventory implements Serializable {
     //If character has quantity for 0 or less the character looses the Equipment any longer in the Inventory
     public void adjustEquipmentAndQty(Equipment equipment, int newQty) {
         int fullQty;
-        if (equipments.contains(equipment)) {
+        for (Equipment e : equipments) {
+        if (e.getName().equals(equipment.getName())) {
             equipments.remove(equipment);
             fullQty = equipment.getQty() + newQty;
             equipment.setQty(fullQty);
@@ -41,10 +42,12 @@ public class Inventory implements Serializable {
             equipment.setQty(newQty);
             equipments.add(equipment);
             equipment.setQty(newQty);
+        }   
         }
         if (equipment.getQty() < 0) {
             equipments.remove(equipment);
         }
+     
 
     }
 

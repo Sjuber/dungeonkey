@@ -129,7 +129,7 @@ public class CharacterFacadeIT {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:username", Player.class);
         playerQuery.setParameter("username", userName);
-        CharacterDTO result = facade.adjustCharactersInventory(playerQuery.getSingleResult().getCharacterList().get(0).getId(), edto, qty);
+        CharacterDTO result = facade.adjustCharactersInventory(playerQuery.getSingleResult().getCharacterList().get(0).getId(), edto);
         int expected = 1;
         assertTrue(result.getInventoryDTO().getEquipmentsDTOQty().size() == expected);
     }
