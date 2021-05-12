@@ -70,6 +70,14 @@ public class CharacterResource {
         CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
         return GSON.toJson(cdtoUpdated);
     }
+    @Path("updatehp/{characterid}/{newhpvalue}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateHP(@PathParam("characterid") String characterID, @PathParam("newhpvalue") String newHPValue){
+        String hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
+        return GSON.toJson(hPValue);
+    }
 
     @Path("searchbyrace/{race}")
     @GET
