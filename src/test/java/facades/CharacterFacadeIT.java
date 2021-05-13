@@ -1,4 +1,4 @@
-package facades;
+/*package facades;
 
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
@@ -178,4 +178,4 @@ public class CharacterFacadeIT {
         assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(), result.get(0).getAbilityScoreDTO().getStrength());
     }
 
-}
+}*/

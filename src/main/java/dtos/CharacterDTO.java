@@ -10,14 +10,14 @@ public class CharacterDTO {
     private AbillityScoresDTO abilityScoreDTO;
     private PlayerDTO playerDTO;
    // private InventoryDTO inventoryDTO;
-    private List<EquipmentDTO> edtos;
+   // private List<EquipmentDTO> edtos;
     
     public CharacterDTO(Character character) {
         this.abilityScoreDTO = new AbillityScoresDTO(character.getAbillityScores());
         this.playerDTO = new PlayerDTO(character.getPlayer());
         //this.inventoryDTO = new InventoryDTO(character.getInventory());
-        edtos = new ArrayList<>();
-        character.getEquipments().forEach(e -> {edtos.add(new EquipmentDTO(e));});
+    //    edtos = new ArrayList<>();
+        //character.getEquipments().forEach(e -> {edtos.add(new EquipmentDTO(e));});
         
     }  
 

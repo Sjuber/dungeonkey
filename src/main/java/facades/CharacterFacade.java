@@ -62,7 +62,7 @@ public class CharacterFacade {
     public CharacterDTO adjustCharactersInventory(int characterID, EquipmentDTO equipmentDTO) {
         EntityManager em = emf.createEntityManager();
         Character character;
-        Equipment equipment = new Equipment(equipmentDTO.getName(), equipmentDTO.getQty(), equipmentDTO.getWeight());
+        Equipment equipment = new Equipment(equipmentDTO.getName(), equipmentDTO.getWeight());
         try {
             em.getTransaction().begin();
             character = em.find(Character.class, characterID);

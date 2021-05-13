@@ -6,31 +6,31 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 @Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE) //makes it possible to have childclasses in one table(? TODO ! Test det lige ) 
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) //makes it possible to have childclasses in one table(? TODO ! Test det lige ) 
 public class Equipment implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     private String name;
-    private int qty;
     private double weight;
-//    @ManyToMany(mappedBy = "equipments")
-//    private List<Inventory> inventories;
-      @ManyToMany(mappedBy = "equipments")
-      private List<Character> character = new ArrayList<>();;
-    
+    @OneToMany
+    private List<Inventory> inventories;
 
-    public Equipment(String name, int qty, double weight) {
+    public Equipment(String name, double weight) {
+        this.inventories = new ArrayList<>();
         this.name = name;
-        this.qty = qty;
         this.weight = weight;
     }
 
     public Equipment() {
+        this.inventories = new ArrayList<>();
     }
 
     public String getName() {
@@ -39,14 +39,6 @@ public class Equipment implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getQty() {
-        return qty;
-    }
-
-    public void setQty(int qty) {
-        this.qty = qty;
     }
 
     public double getWeight() {
