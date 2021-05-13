@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Inventory implements Serializable {
@@ -16,21 +17,28 @@ public class Inventory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToMany(mappedBy = "inventory")
+    @ManyToOne
     private Equipment equipment;
-    @OneToMany(mappedBy = "inventory")
+    @ManyToOne
     private Character character;
     private int qty;
 
     public Inventory() {
     }
 
-    //Adds equipment but if it already exist it adjust quantity by adding og removing the amount <---- (TODO - Test this)
-    //If character has quantity for 0 or less the character looses the Equipment any longer in the Inventory
+    public Inventory(Equipment equipment, int qty) {
+        this.equipment = equipment;
+        this.qty = qty;
+    }
+    
+    
+
     public void addEquipmentAndQty(Equipment equipment, int qnty) {
         this.equipment = equipment;
         this.qty = qnty;    
         }
+    
+    
        /* int fullQty;
         List<Equipment> tmpList = new ArrayList<>();
         List<Equipment> tmpList2 = new ArrayList<>();
@@ -57,6 +65,18 @@ public class Inventory implements Serializable {
 
     public void setQty(int qty) {
         this.qty = qty;
+    }
+
+    public Equipment getEquipment() {
+        return equipment;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public int getQty() {
+        return qty;
     }
      
   

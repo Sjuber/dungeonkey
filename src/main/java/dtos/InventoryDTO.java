@@ -1,28 +1,15 @@
-//package dtos;
-//
-//import entities.Equipment;
-//import entities.Inventory;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.TreeMap;
-//
-//public class InventoryDTO {
-//
-//    private List<EquipmentDTO> equipmentsDTO;
-//
-//    public InventoryDTO(Inventory inventory) {
-//        equipmentsDTO = new ArrayList<>();
-//        if (!(inventory.getEquipments().isEmpty())) {    
-//            inventory.getEquipments().forEach(e
-//                    -> {
-//                equipmentsDTO.add(new EquipmentDTO(e));
-//            });
-//        }
-//    }
-//
-//    public List<EquipmentDTO> getEquipmentsDTOQty() {
-//        return equipmentsDTO;
-//    }
-//
-//}
+package dtos;
+
+import entities.Inventory;
+
+public class InventoryDTO {
+
+    private EquipmentDTO equipmentsDTO;
+    private int qty;
+
+    public InventoryDTO(Inventory inventory) {
+        this.equipmentsDTO = new EquipmentDTO(inventory.getEquipment());
+        this.qty = inventory.getQty();
+    }
+
+}

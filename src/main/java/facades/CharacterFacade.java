@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import entities.Character;
 import entities.Equipment;
+import entities.Inventory;
 import java.util.List;
 import javax.persistence.TypedQuery;
 
@@ -24,7 +25,7 @@ public class CharacterFacade {
         return instance;
     }
 
-    public static CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) {
+    public CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) {
         EntityManager em = emf.createEntityManager();
         Character dbCharacter;
         try {
@@ -59,25 +60,60 @@ public class CharacterFacade {
         return new AbillityScoresDTO(character.getAbillityScores());
     }
 
-    public CharacterDTO adjustCharactersInventory(int characterID, EquipmentDTO equipmentDTO) {
+    public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto, int qty) throws Exception {
         EntityManager em = emf.createEntityManager();
-        Character character;
-        Equipment equipment = new Equipment(equipmentDTO.getName(), equipmentDTO.getWeight());
-        try {
-            em.getTransaction().begin();
-            character = em.find(Character.class, characterID);
-            //character.getInventory().adjustEquipmentAndQty(equipment, equipment.getQty());
-            em.merge(character);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+        EntityManager emPersist = emf.createEntityManager();
+        Character character = null;
+        Equipment equipment = null;
+        Equipment equipmentNew;
+        Inventory inventory;
+        List<Inventory> inventories;
+        int qtyTotal;
+        if (edto == null) {
+            throw new Exception("The given equipment title must not be empty");
+        } else {
+            try {
+                em.getTransaction().begin();
+                equipment = em.find(Equipment.class, edto.getName());
+                if (equipment == null) {
+                    character = em.find(Character.class, characterID);
+                    equipmentNew = new Equipment(edto.getName(), edto.getWeight());
+                    
+                    try {
+                        emPersist.getTransaction().begin();
+                        emPersist.persist(equipmentNew);
+                        emPersist.getTransaction().commit();
+                    } finally {
+                        emPersist.close();
+                    }
+                    character.addInventory(new Inventory(new Equipment(edto.getName(), edto.getWeight()), qty));
+                    em.merge(character);
+
+                } else {
+                    TypedQuery<Inventory> inventoryQ = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
+                    inventoryQ.setParameter("equipmentname", edto.getName());
+                    inventoryQ.setParameter("characterid", characterID);
+                    //Iventory has only one matchset of equipment and character, therefor we can only have the first inventory from db
+                    inventories = inventoryQ.getResultList();
+                    inventory = inventories.get(0);
+                    qtyTotal = inventory.getQty() + qty;
+                    inventory.setQty(qtyTotal);
+                    character = inventory.getCharacter();
+                    inventory.setCharacter(character);
+                    em.merge(character);
+                }
+                em.getTransaction().commit();
+            } finally {
+                em.close();
+            }
         }
         return new CharacterDTO(character);
     }
 
     public List<CharacterDTO> searchByName(String characterName) {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class);
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class
+        );
         character.setParameter("name", characterName);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -87,7 +123,8 @@ public class CharacterFacade {
 
     public List<CharacterDTO> searchByRace(String characterRace) {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.race =:race", Character.class);
+        TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.race =:race", Character.class
+        );
         character.setParameter("race", characterRace);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -106,7 +143,8 @@ public class CharacterFacade {
 //    }
     public List<CharacterDTO> searchByPlayer(String playerName) {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class);
+        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class
+        );
         query.setParameter("playername", playerName);
         List<Character> resultlist = query.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -117,12 +155,13 @@ public class CharacterFacade {
         EntityManager em = emf.createEntityManager();
         Equipment equipment = null;
         try {
-        em.getTransaction().begin();
-        equipment = em.find(Equipment.class, equipmentName);
-        }finally{
+            em.getTransaction().begin();
+            equipment = em.find(Equipment.class,
+                    equipmentName);
+        } finally {
             em.close();
         }
-        if(equipment==null){
+        if (equipment == null) {
             throw new Exception("There is no such equipment with the given name");
         }
         return new EquipmentDTO(equipment);

@@ -1,4 +1,4 @@
-/*package facades;
+package facades;
 
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
@@ -17,13 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import utils.EMF_Creator;
 import entities.Character;
 import entities.Equipment;
+import entities.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
 
 
-@Disabled
+//@Disabled
 public class CharacterFacadeIT {
 
     private static EntityManagerFactory emf;
@@ -47,9 +48,10 @@ public class CharacterFacadeIT {
         EntityManager emDelete = emf.createEntityManager();
         try {
             emDelete.getTransaction().begin();
+            emDelete.createQuery("DELETE FROM Inventory").executeUpdate();
+            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
             emDelete.createQuery("DELETE FROM Player").executeUpdate();
-            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
             emDelete.getTransaction().commit();
         } finally {
@@ -61,7 +63,8 @@ public class CharacterFacadeIT {
         Player player2 = new Player("Jens", "Skeletor69");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
-        Equipment equipment = new Equipment("Helm Of Glory", 1, 1.5);
+        Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+        ch1.addInventory(new Inventory(equipment, 1));
         try {
             em.getTransaction().begin();
             Role playerRole = new Role("player");
@@ -73,9 +76,10 @@ public class CharacterFacadeIT {
             em.persist(playerRole);
             em.persist(DMRole);
             em.persist(equipment);
-            player1.addCharacter(ch1);
-            em.persist(ch1);
             em.persist(player1);
+            player1.addCharacter(ch1);
+            //em.persist(ch1);
+            em.merge(player1);
             em.persist(DM);
             em.persist(player2);
             em.getTransaction().commit();
@@ -121,20 +125,21 @@ public class CharacterFacadeIT {
         assertEquals(expResult.getStrength(), result.getStrength());
     }
 
-//    @Test
-//    public void adjustCharactersInventory() {
-//        System.out.println("adjustCharactersInventory");
-//        int qty = 1;
-//        Equipment equipment = new Equipment("Helm Of Glory", qty, 1.5);
-//        EquipmentDTO edto = new EquipmentDTO(equipment);
-//        String userName = "Nikolaj";
-//        EntityManager em = emf.createEntityManager();
-//        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:username", Player.class);
-//        playerQuery.setParameter("username", userName);
-//        CharacterDTO result = facade.adjustCharactersInventory(playerQuery.getSingleResult().getCharacterList().get(0).getId(), edto);
-//        int expected = 1;
-//        assertTrue(result.getInventoryDTO().getEquipmentsDTOQty().size() == expected);
-//    }
+    @Test
+    public void addEquipmentForCharactersInventoryByAdding4() throws Exception {
+        System.out.println("adjustCharactersInventory");
+        int qty = 4;
+        Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+        EquipmentDTO edto = new EquipmentDTO(equipment);
+        String userName = "Nikolaj";
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:username", Player.class);
+        playerQuery.setParameter("username", userName);
+        Player player = playerQuery.getSingleResult();
+        CharacterDTO result = facade.updateCharactersInventory(player.getCharacterList().get(0).getId(), edto, qty);
+        int expected = 1;
+        assertTrue(result.getInventoryDTO().size() == expected);
+    }
 
     @Test
     public void testSearchByName() {
@@ -178,4 +183,4 @@ public class CharacterFacadeIT {
         assertEquals(expResult.get(0).getAbilityScoreDTO().getStrength(), result.get(0).getAbilityScoreDTO().getStrength());
     }
 
-}*/
+}

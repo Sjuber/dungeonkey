@@ -20,8 +20,8 @@ public class Equipment implements Serializable {
     @Basic(optional = false)
     private String name;
     private double weight;
-    @OneToMany
-    private List<Inventory> inventories;
+    @OneToMany(mappedBy = "equipment")
+    private List<Inventory> inventories = new ArrayList<>();
 
     public Equipment(String name, double weight) {
         this.inventories = new ArrayList<>();

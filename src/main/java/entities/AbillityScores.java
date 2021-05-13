@@ -33,7 +33,7 @@ public class AbillityScores implements Serializable {
     private Integer wisdom;
     private Integer intelligence;
     private Integer charisma;
-    @OneToOne(mappedBy = "abillityScores")
+    @OneToOne(cascade = CascadeType.DETACH, mappedBy = "abillityScores")
     private Character character;
 
         public AbillityScores( Integer strength, Integer dexterity, Integer constitution, Integer wisdom, Integer intelligence, Integer charisma) {
@@ -43,7 +43,6 @@ public class AbillityScores implements Serializable {
         this.wisdom = wisdom;
         this.intelligence = intelligence;
         this.charisma = charisma;
- 
     }
 
     public AbillityScores() {

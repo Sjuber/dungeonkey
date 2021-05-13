@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.persistence.ManyToOne;
+
 /**
  *
  * @author SJUBE
@@ -37,16 +38,16 @@ public class Character implements Serializable {
     private String biography;
     private String race;
     private String classs;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     private AbillityScores abillityScores;
     @ManyToOne
     private Player player;
 //    @OneToOne(cascade = CascadeType.PERSIST)
 //    private Inventory inventory;
-    @OneToMany(cascade = CascadeType.DETACH)
-    private Inventory inventory;
+    @OneToMany(cascade = CascadeType.DETACH, mappedBy = "character")
+    private List<Inventory> inventory ;
 
-    public Character(Integer lvl,Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
+    public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
         this.lvl = lvl;
         this.maxHP = maxHP;
         this.currentHP = currentHP;
@@ -57,6 +58,8 @@ public class Character implements Serializable {
         this.race = race;
         this.classs = classs;
         this.abillityScores = abillityScores;
+        abillityScores.setCharacter(this);
+        this.inventory = new ArrayList<>();
     }
 
     public Character() {
@@ -69,12 +72,11 @@ public class Character implements Serializable {
     public void setLvl(Integer level) {
         this.lvl = level;
     }
-    
-    
+
     public Integer getId() {
         return id;
     }
-    
+
     public Integer getMaxHP() {
         return maxHP;
     }
@@ -144,15 +146,15 @@ public class Character implements Serializable {
     }
 
     public void setAbillityScores(AbillityScores abillityScores) {
-        if(abillityScores!=null){
-        this.abillityScores = abillityScores;
-        abillityScores.setCharacter(this);
+        if (abillityScores != null) {
+            this.abillityScores = abillityScores;
+            abillityScores.setCharacter(this);
         }
     }
 
     public void setPlayer(Player player) {
-        if(player != null){
-        this.player = player;
+        if (player != null) {
+            this.player = player;
         }
     }
 
@@ -160,12 +162,17 @@ public class Character implements Serializable {
         return player;
     }
 
-    public Inventory getInventory() {
-        return inventory;
+    public void addInventory(Inventory inventory) {
+        if (inventory != null) {
+            this.inventory.add(inventory);
+            inventory.setCharacter(this);
+        }
     }
-    
-    
-   
+
+    public List<Inventory> getInventories() {
+        return this.inventory;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -184,6 +191,4 @@ public class Character implements Serializable {
         return sb.toString();
     }
 
-
- 
 }

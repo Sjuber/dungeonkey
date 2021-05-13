@@ -7,7 +7,10 @@ import dtos.CharacterDTO;
 import dtos.EquipmentDTO;
 import entities.AbillityScores;
 import entities.Equipment;
+import errorhandling.ExceptionDTO;
 import facades.CharacterFacade;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,15 +52,22 @@ public class CharacterResource {
         CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
         return GSON.toJson(cdtoUpdated);
     }
-    
-    @Path("{characterid}/inventory")
+
+    @Path("{characterid}/inventory/{extraqtyforequipment}")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String addEquipmentForCharactersInventory(@PathParam("characterid") int characterID, String equipment) {
-        EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
-        CharacterDTO cdtoUpdated = facade.adjustCharactersInventory(characterID, equipmentDTO);
-        return GSON.toJson(cdtoUpdated);
+    public String addEquipmentForCharactersInventory(@PathParam("characterid") int characterID, @PathParam("extraqtyforequipment") int qty, String equipment) {
+        CharacterDTO cdtoUpdated = null;
+        ExceptionDTO exceptionDTO;
+        try {
+            EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
+            cdtoUpdated = facade.updateCharactersInventory(characterID, equipmentDTO, qty);
+            return GSON.toJson(cdtoUpdated);
+        } catch (Exception ex) {
+            exceptionDTO = new ExceptionDTO(404, ex.getMessage());
+        }
+        return exceptionDTO.getMessage();
     }
 
     @Path("inventory/{equipmentname}")
