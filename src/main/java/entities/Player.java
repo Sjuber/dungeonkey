@@ -33,7 +33,7 @@ public class Player implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "password")
     private String password;
-    @JoinTable(name = "user_roles", joinColumns = {
+    @JoinTable(name = "player_roles", joinColumns = {
         @JoinColumn(name = "user_name", referencedColumnName = "user_name")}, inverseJoinColumns = {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany

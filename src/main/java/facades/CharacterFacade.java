@@ -13,6 +13,7 @@ import entities.Skills;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
+import security.errorhandling.AuthenticationException;
 
 public class CharacterFacade {
 
@@ -214,6 +215,20 @@ public class CharacterFacade {
         }
         return characterWithNewHp.getCurrentHP() + "";
 
+    }
+    
+        public Player getVeryfiedUser(String username, String password) throws AuthenticationException {
+        EntityManager em = emf.createEntityManager();
+        Player player;
+        try {
+            player = em.find(Player.class, username);
+            if (player == null || !player.verifyPassword(password)) {
+                throw new AuthenticationException("Invalid user name or password");
+            }
+        } finally {
+            em.close();
+        }
+        return player;
     }
 
 }
