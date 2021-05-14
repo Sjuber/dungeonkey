@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -48,5 +49,19 @@ public class Equipment implements Serializable {
     public void setWeight(double weight) {
         this.weight = weight;
     }
+    
+    public void addInventory(Inventory inventory) {
+        if (inventory != null) {
+            this.inventories.add(inventory);
+            inventory.setEquipment(this);
+        }
+    }
+
+    public List<Inventory> getInventories() {
+        return inventories;
+    }
+    
+    
+
 
 }

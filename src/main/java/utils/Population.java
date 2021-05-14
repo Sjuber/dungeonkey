@@ -57,6 +57,7 @@ public class Population {
         Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
         Equipment equipment = new Equipment("Helm Of Glory", 1.5);
         ch1.addInventory(new Inventory(equipment, 1));
+        equipment.addInventory(ch1.getInventories().get(0));
         try {
             em.getTransaction().begin();
             Role playerRole = new Role("player");
@@ -67,7 +68,7 @@ public class Population {
             //both.addRole(DMRole); // MAN KAN GODT HAVE BEGGE ROLLER CATHRINE !!!
             em.persist(playerRole);
             em.persist(DMRole);
-            em.persist(equipment);
+//            em.persist(equipment);
             em.persist(player1);
             player1.addCharacter(ch1);
             //em.persist(ch1);

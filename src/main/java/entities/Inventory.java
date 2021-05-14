@@ -28,18 +28,16 @@ public class Inventory implements Serializable {
 
     public Inventory(Equipment equipment, int qty) {
         this.equipment = equipment;
+        equipment.addInventory(this);
         this.qty = qty;
     }
-    
-    
 
     public void addEquipmentAndQty(Equipment equipment, int qnty) {
         this.equipment = equipment;
-        this.qty = qnty;    
-        }
-    
-    
-       /* int fullQty;
+        this.qty = qnty;
+    }
+
+    /* int fullQty;
         List<Equipment> tmpList = new ArrayList<>();
         List<Equipment> tmpList2 = new ArrayList<>();
         Equipment equipmentNew = equipment;
@@ -58,7 +56,6 @@ public class Inventory implements Serializable {
         if (equipment.getQty() <= 0) {
             equipments.remove(equipmentNew);
         }*/
-
     public void setCharacter(Character character) {
         this.character = character;
     }
@@ -71,6 +68,10 @@ public class Inventory implements Serializable {
         return equipment;
     }
 
+    public void setEquipment(Equipment equipment) {
+        this.equipment = equipment;
+    }
+    
     public Character getCharacter() {
         return character;
     }
@@ -78,6 +79,5 @@ public class Inventory implements Serializable {
     public int getQty() {
         return qty;
     }
-     
-  
+
 }

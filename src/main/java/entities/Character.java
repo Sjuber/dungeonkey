@@ -44,7 +44,7 @@ public class Character implements Serializable {
     private Player player;
 //    @OneToOne(cascade = CascadeType.PERSIST)
 //    private Inventory inventory;
-    @OneToMany(cascade = CascadeType.DETACH, mappedBy = "character")
+    @OneToMany(mappedBy = "character")
     private List<Inventory> inventory ;
 
     public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
@@ -172,6 +172,12 @@ public class Character implements Serializable {
     public List<Inventory> getInventories() {
         return this.inventory;
     }
+
+    public void setInventory(List<Inventory> inventory) {
+        this.inventory = inventory;
+    }
+    
+    
 
     @Override
     public String toString() {

@@ -78,30 +78,42 @@ public class CharacterFacade {
                 if (equipment == null) {
                     character = em.find(Character.class, characterID);
                     equipmentNew = new Equipment(edto.getName(), edto.getWeight());
-                    
+
                     try {
                         emPersist.getTransaction().begin();
-                        emPersist.persist(equipmentNew);
+                       // emPersist.persist(equipmentNew);
+                       inventory = new Inventory(equipmentNew,qty);
+                        character.addInventory(inventory);
+                        emPersist.merge(inventory);
+                        emPersist.merge(character);
                         emPersist.getTransaction().commit();
                     } finally {
                         emPersist.close();
                     }
-                    character.addInventory(new Inventory(new Equipment(edto.getName(), edto.getWeight()), qty));
-                    em.merge(character);
-
+                    
                 } else {
                     TypedQuery<Inventory> inventoryQ = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
                     inventoryQ.setParameter("equipmentname", edto.getName());
                     inventoryQ.setParameter("characterid", characterID);
-                    //Iventory has only one matchset of equipment and character, therefor we can only have the first inventory from db
+                    //Iventory has only one match of equipment and character, therefor we can only have the first inventory from db
                     inventories = inventoryQ.getResultList();
                     inventory = inventories.get(0);
-                    qtyTotal = inventory.getQty() + qty;
-                    inventory.setQty(qtyTotal);
                     character = inventory.getCharacter();
-                    inventory.setCharacter(character);
-                    em.merge(character);
+                    qtyTotal = inventory.getQty() + qty;
+                    if (qtyTotal <= 0) {
+                        em.remove(inventory);
+                        //inventory.getEquipment().getInventories().remove(inventory);
+                        equipment.getInventories().remove(inventory);
+                    } else {
+                        inventory.setQty(qtyTotal);
+                        inventory.setCharacter(character);
+                        em.merge(character);
+                    }
                 }
+                if (equipment!=null && equipment.getInventories().isEmpty()) {
+                    em.remove(equipment);
+                }
+                character = em.find(Character.class, characterID);
                 em.getTransaction().commit();
             } finally {
                 em.close();
