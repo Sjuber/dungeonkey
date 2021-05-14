@@ -1,17 +1,16 @@
 package dtos;
 
-
 import entities.Character;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CharacterDTO {
 
     //private int id; 
     private Integer levl;
     private AbillityScoresDTO abilityScoreDTO;
+    private SkillsDTO skillsDTO;
     private PlayerDTO playerDTO;
     private Integer maxHp;
     private Integer currentHP;
@@ -25,6 +24,7 @@ public class CharacterDTO {
     public CharacterDTO(Character ch) {
         this.levl = ch.getLvl();
         this.abilityScoreDTO = new AbillityScoresDTO(ch.getAbillityScores());
+        this.skillsDTO = new SkillsDTO(ch.getSkills());
         this.playerDTO = new PlayerDTO(ch.getPlayer());
         this.maxHp = ch.getMaxHP();
         this.currentHP = ch.getCurrentHP();
@@ -36,14 +36,16 @@ public class CharacterDTO {
         this.classs = ch.getClasss();
     }
 
-    
-    
     public CharacterDTO() {
     }
 
     /*public int getId() {
         return id;
     }*/
+    public SkillsDTO getSkillsDTO() {
+        return skillsDTO;
+    }
+
     public AbillityScoresDTO getAbilityScoreDTO() {
         return abilityScoreDTO;
     }
@@ -87,8 +89,6 @@ public class CharacterDTO {
     public Integer getLevl() {
         return levl;
     }
-    
-    
 
     public static List<CharacterDTO> getDtos(List<Character> characters) {
         List<CharacterDTO> cdtos = new ArrayList();
@@ -101,7 +101,7 @@ public class CharacterDTO {
         StringBuilder sb = new StringBuilder();
         sb.append("CharacterDTO{levl=").append(levl);
         sb.append(", abilityScoreDTO=").append(abilityScoreDTO);
-        sb.append(", playerDTO=").append(playerDTO);
+        sb.append(", skillsDTO=").append(skillsDTO);
         sb.append(", maxHp=").append(maxHp);
         sb.append(", currentHP=").append(currentHP);
         sb.append(", ac=").append(ac);
@@ -113,6 +113,7 @@ public class CharacterDTO {
         sb.append('}');
         return sb.toString();
     }
-    
+
+
 
 }
