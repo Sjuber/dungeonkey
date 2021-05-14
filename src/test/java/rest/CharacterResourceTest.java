@@ -5,12 +5,14 @@ import entities.AbillityScores;
 import entities.Character;
 import entities.Player;
 import entities.Role;
+import entities.Skills;
 import facades.CharacterFacade;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.MediaType;
@@ -87,7 +89,9 @@ public class CharacterResourceTest {
         Player player2 = new Player("Jens", "Skeletor69");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         AbillityScores abiSco2 = new AbillityScores(18, 10, 14, 12, 14, 10);
-        ch = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        Random randi = new Random(0);
+        Skills skils = new Skills(randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5));
+        ch = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1, skils);
         try {
             em.getTransaction().begin();
             Role playerRole = new Role("player");
@@ -125,13 +129,11 @@ public class CharacterResourceTest {
                 .body("msg", equalTo("Hello World"));
     }
 
-
-
     @Test
     public void testAbiScores() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/characters/"+ch.getId()+"/abillityscores").then()
+                .get("/characters/" + ch.getId() + "/abillityscores").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("strength", equalTo(18));
@@ -148,9 +150,9 @@ public class CharacterResourceTest {
 //                .statusCode(HttpStatus.OK_200.getStatusCode())
 //                .body("strength", equalTo(18));
 //    }
-    
+
     @Test
-    public void testSearchRace() throws Exception{
+    public void testSearchRace() throws Exception {
         given()
                 .contentType("application/json")
                 .get("/characters/searchbyrace/Orc").then()
@@ -158,9 +160,9 @@ public class CharacterResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("strength", equalTo(18));
     }
-    
-        @Test
-    public void testSearchPlayer() throws Exception{
+
+    @Test
+    public void testSearchPlayer() throws Exception {
         given()
                 .contentType("application/json")
                 .get("/characters/searchbyplayer/Nikolaj").then()
@@ -168,12 +170,12 @@ public class CharacterResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("dexterity", equalTo(8));
     }
-    
-        @Test
-    public void testSearchName() throws Exception{
+
+    @Test
+    public void testSearchName() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/characters/searchbyname/"+ch.getName()).then()
+                .get("/characters/searchbyname/" + ch.getName()).then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("constitution", equalTo(14));
