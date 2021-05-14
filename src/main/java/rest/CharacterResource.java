@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
+import dtos.PlayerDTO;
 import entities.AbillityScores;
 import entities.Character;
 import facades.CharacterFacade;
@@ -55,7 +56,6 @@ public class CharacterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String updateCharacter(@PathParam("characterID") int characterID, String json) throws Exception {
-        System.out.println(json);
         CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
         CharacterDTO chaDTOUpdated = facade.updateCharacter(chaDTO, characterID);
         return GSON.toJson(chaDTOUpdated);
@@ -77,6 +77,15 @@ public class CharacterResource {
     public String updateHP(@PathParam("characterid") String characterID, @PathParam("newhpvalue") String newHPValue){
         String hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
         return GSON.toJson(hPValue);
+    }
+    
+        @Path("updatebio/{characterid}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateBiography(@PathParam("characterid") int charc, String bio) throws Exception{
+        String bios = facade.updateBiography(bio, charc);
+        return GSON.toJson(bios);
     }
 
     @Path("searchbyrace/{race}")
@@ -102,5 +111,5 @@ public class CharacterResource {
         List<CharacterDTO> chDTO = facade.searchByPlayer(player);
         return GSON.toJson(chDTO);
     }
-
+    
 }

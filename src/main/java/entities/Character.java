@@ -40,11 +40,12 @@ public class Character implements Serializable {
     private String classs;
     @OneToOne(cascade = CascadeType.PERSIST)
     private AbillityScores abillityScores;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Skills skills;
     @ManyToOne
     private Player player;
-    
 
-    public Character(Integer lvl,Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
+    public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores, Skills skills) {
         this.lvl = lvl;
         this.maxHP = maxHP;
         this.currentHP = currentHP;
@@ -55,6 +56,8 @@ public class Character implements Serializable {
         this.race = race;
         this.classs = classs;
         this.abillityScores = abillityScores;
+        this.skills = skills;
+        this.skills.setCharacter(this);
     }
 
     public Character() {
@@ -67,12 +70,11 @@ public class Character implements Serializable {
     public void setLvl(Integer level) {
         this.lvl = level;
     }
-    
-    
+
     public Integer getId() {
         return id;
     }
-    
+
     public Integer getMaxHP() {
         return maxHP;
     }
@@ -146,17 +148,23 @@ public class Character implements Serializable {
     }
 
     public void setPlayer(Player player) {
-        if(player != null){
-        this.player = player;
-     
-        
+        if (player != null) {
+            this.player = player;
+
         }
     }
 
     public Player getPlayer() {
         return player;
     }
-    
+
+    public Skills getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Skills skills) {
+        this.skills = skills;
+    }
 
     @Override
     public String toString() {
@@ -172,10 +180,10 @@ public class Character implements Serializable {
         sb.append(", race=").append(race);
         sb.append(", classs=").append(classs);
         sb.append(", abillityScores=").append(abillityScores);
+        sb.append(", skills=").append(skills);
+        sb.append(", player=").append(player);
         sb.append('}');
         return sb.toString();
     }
 
-
- 
 }
