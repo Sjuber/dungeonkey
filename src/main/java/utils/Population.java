@@ -47,5 +47,9 @@ public class Population {
             em.close();
         }
   }
+  
+    public static void main(String[] args) {
+        populate();
+    }
 
 }
