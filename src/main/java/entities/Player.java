@@ -38,7 +38,7 @@ public class Player implements Serializable {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany
     private List<Role> roleList = new ArrayList<>();
-    @OneToMany(mappedBy = "player")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "player")
     private List<Character> characterList = new ArrayList<>();
 
     public List<String> getRolesAsStrings() {
@@ -100,5 +100,11 @@ public class Player implements Serializable {
         character.setPlayer(this);
         }
     }
+
+    public List<Character> getCharacterList() {
+        return characterList;
+    }
+    
+    
 
 }

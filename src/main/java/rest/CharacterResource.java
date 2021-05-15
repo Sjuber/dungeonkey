@@ -4,10 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
+import dtos.EquipmentDTO;
+import entities.AbillityScores;
+import entities.Equipment;
+import errorhandling.ExceptionDTO;
+import facades.CharacterFacade;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import dtos.PlayerDTO;
 import entities.AbillityScores;
 import entities.Character;
-import facades.CharacterFacade;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -94,6 +100,31 @@ public class CharacterResource {
     public String searchByRace(@PathParam("race") String race) {
         List<CharacterDTO> chDTO = facade.searchByRace(race);
         return GSON.toJson(chDTO);
+    }
+
+    @Path("{characterid}/inventory/{extraqtyforequipment}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String addEquipmentForCharactersInventory(@PathParam("characterid") int characterID, @PathParam("extraqtyforequipment") int qty, String equipment) {
+        CharacterDTO cdtoUpdated = null;
+        ExceptionDTO exceptionDTO;
+        try {
+            EquipmentDTO equipmentDTO = GSON.fromJson(equipment, EquipmentDTO.class);
+            cdtoUpdated = facade.updateCharactersInventory(characterID, equipmentDTO, qty);
+            return GSON.toJson(cdtoUpdated);
+        } catch (Exception ex) {
+            exceptionDTO = new ExceptionDTO(404, ex.getMessage());
+        }
+        return exceptionDTO.getMessage();
+    }
+
+    @Path("inventory/{equipmentname}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getEquipment(@PathParam("equipmentname") String equipmentName) throws Exception {
+        EquipmentDTO equipmentDTO = facade.getEquipment(equipmentName);
+        return GSON.toJson(equipmentDTO);
     }
 
     @Path("searchbyname/{name}")

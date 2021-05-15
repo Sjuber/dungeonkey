@@ -9,16 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.persistence.ManyToOne;
 
-/**
- *
- * @author SJUBE
- */
+
 @Entity
 @Table(name = "characters")
 public class Character implements Serializable {
@@ -38,12 +35,16 @@ public class Character implements Serializable {
     private String biography;
     private String race;
     private String classs;
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     private AbillityScores abillityScores;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Skills skills;
     @ManyToOne
     private Player player;
+//    @OneToOne(cascade = CascadeType.PERSIST)
+//    private Inventory inventory;
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "character")
+    private List<Inventory> inventory ;
 
     public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores, Skills skills) {
         this.lvl = lvl;
@@ -56,6 +57,8 @@ public class Character implements Serializable {
         this.race = race;
         this.classs = classs;
         this.abillityScores = abillityScores;
+        abillityScores.setCharacter(this);
+        this.inventory = new ArrayList<>();
         this.skills = skills;
         this.skills.setCharacter(this);
     }
@@ -144,7 +147,10 @@ public class Character implements Serializable {
     }
 
     public void setAbillityScores(AbillityScores abillityScores) {
-        this.abillityScores = abillityScores;
+        if (abillityScores != null) {
+            this.abillityScores = abillityScores;
+            abillityScores.setCharacter(this);
+        }
     }
 
     public void setPlayer(Player player) {
@@ -158,6 +164,24 @@ public class Character implements Serializable {
         return player;
     }
 
+
+    public void addInventory(Inventory inventory) {
+        if (inventory != null) {
+            this.inventory.add(inventory);
+            inventory.setCharacter(this);
+        }
+    }
+
+    public List<Inventory> getInventories() {
+        return this.inventory;
+    }
+
+    public void setInventory(List<Inventory> inventory) {
+        this.inventory = inventory;
+    }
+    
+    
+
     public Skills getSkills() {
         return skills;
     }
@@ -165,6 +189,7 @@ public class Character implements Serializable {
     public void setSkills(Skills skills) {
         this.skills = skills;
     }
+
 
     @Override
     public String toString() {

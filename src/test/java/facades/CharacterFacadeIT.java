@@ -2,6 +2,7 @@ package facades;
 
 import dtos.AbillityScoresDTO;
 import dtos.CharacterDTO;
+import dtos.EquipmentDTO;
 import entities.AbillityScores;
 import entities.Player;
 import entities.Role;
@@ -15,12 +16,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import utils.EMF_Creator;
 import entities.Character;
-import entities.Skills;
+import entities.Equipment;
+import entities.Inventory;
 import java.util.ArrayList;
+import java.util.List;
+import entities.Skills;
 import java.util.List;
 import java.util.Random;
 import javax.persistence.TypedQuery;
 import org.junit.jupiter.api.Disabled;
+
+
 //@Disabled
 
 public class CharacterFacadeIT {
@@ -46,7 +52,10 @@ public class CharacterFacadeIT {
         EntityManager emDelete = emf.createEntityManager();
         try {
             emDelete.getTransaction().begin();
+            emDelete.createQuery("DELETE FROM Inventory").executeUpdate();
+            emDelete.createQuery("DELETE FROM Equipment").executeUpdate();
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
+            emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
             emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.getTransaction().commit();
@@ -58,9 +67,11 @@ public class CharacterFacadeIT {
         Player DM = new Player("Cathrine", "Portraet11");
         Player player2 = new Player("Jens", "Skeletor69");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        Random randi = new Random(0);
+        randi = new Random(0);
         Skills skils = new Skills(randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5));
         Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1, skils);
+        Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+        ch1.addInventory(new Inventory(equipment, 1));
         try {
             em.getTransaction().begin();
             Role playerRole = new Role("player");
@@ -71,12 +82,15 @@ public class CharacterFacadeIT {
             //both.addRole(DMRole); // MAN KAN GODT HAVE BEGGE ROLLER CATHRINE !!!
             em.persist(playerRole);
             em.persist(DMRole);
+            em.persist(equipment);
             em.persist(player1);
             player1.addCharacter(ch1);
+            //em.persist(ch1);
             em.merge(player1);
             em.persist(DM);
             em.persist(player2);
             em.getTransaction().commit();
+            System.out.println("");
         } finally {
             em.close();
         }
@@ -118,6 +132,22 @@ public class CharacterFacadeIT {
         AbillityScoresDTO expResult = new AbillityScoresDTO(new AbillityScores(18, 8, 14, 12, 14, 10));
         AbillityScoresDTO result = facade.getASByCharacter(characterID);
         assertEquals(expResult.getStrength(), result.getStrength());
+    }
+
+    @Test
+    public void addEquipmentForCharactersInventoryByAdding4() throws Exception {
+        System.out.println("adjustCharactersInventory");
+        int qty = 4;
+        Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+        EquipmentDTO edto = new EquipmentDTO(equipment);
+        String userName = "Nikolaj";
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:username", Player.class);
+        playerQuery.setParameter("username", userName);
+        Player player = playerQuery.getSingleResult();
+        CharacterDTO result = facade.updateCharactersInventory(player.getCharacterList().get(0).getId(), edto, qty);
+        int expected = 1;
+        assertTrue(result.getInventoryDTO().size() == expected);
     }
 
     @Test

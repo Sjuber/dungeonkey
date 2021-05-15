@@ -103,7 +103,6 @@ public class AbillityScores implements Serializable {
 
     public void setCharacter(Character character) {
         this.character = character;
-        character.setAbillityScores(this);
     }
 
     @Override
