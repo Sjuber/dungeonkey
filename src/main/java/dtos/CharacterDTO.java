@@ -1,11 +1,12 @@
-
 package dtos;
+
 import entities.Character;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterDTO {
-
+  
     private Integer lvl;
     private Integer maxHP;
     private Integer currentHP;
@@ -16,23 +17,32 @@ public class CharacterDTO {
     private String race;
     private String classs;
     private AbillityScoresDTO abilityScoreDTO;
+    private SkillsDTO skillsDTO;
     private PlayerDTO playerDTO;
     private List<InventoryDTO> inventoryDTO;
-    
-    public CharacterDTO(Character character) {
-        this.abilityScoreDTO = new AbillityScoresDTO(character.getAbillityScores());
-        this.playerDTO = new PlayerDTO(character.getPlayer());
-        inventoryDTO = new ArrayList<>();
+
+    public CharacterDTO(Character ch) {
+        this.levl = ch.getLvl();
+        this.abilityScoreDTO = new AbillityScoresDTO(ch.getAbillityScores());
         character.getInventories().forEach(inventory -> this.inventoryDTO.add(new InventoryDTO(inventory)));
-        this.lvl = character.getLvl();
-        this.maxHP = character.getMaxHP();
-        this.ac = character.getAc();
-        this.speed = character.getSpeed();
-        this.name = character.getName();
-        this.biography = character.getBiography();
-        this.race = character.getRace();
-        this.classs = character.getClasss();
-    }  
+        this.skillsDTO = new SkillsDTO(ch.getSkills());
+        this.playerDTO = new PlayerDTO(ch.getPlayer());
+        this.maxHp = ch.getMaxHP();
+        this.currentHP = ch.getCurrentHP();
+        this.ac = ch.getAc();
+        this.speed = ch.getSpeed();
+        this.name = ch.getName();
+        this.biography = ch.getBiography();
+        this.race = ch.getRace();
+        this.classs = ch.getClasss();
+    }
+
+    public CharacterDTO() {
+    }
+
+    public SkillsDTO getSkillsDTO() {
+        return skillsDTO;
+    }
 
     public AbillityScoresDTO getAbilityScoreDTO() {
         return abilityScoreDTO;
@@ -46,11 +56,66 @@ public class CharacterDTO {
         return inventoryDTO;
     }
    
-    public static List<CharacterDTO> getDtos(List<Character> characters){
-        List<CharacterDTO> cdtos = new ArrayList<>();
-        characters.forEach(character->cdtos.add(new CharacterDTO(character)));
+    public Integer getMaxHp() {
+        return maxHp;
+    }
+
+    public Integer getCurrentHP() {
+        return currentHP;
+    }
+
+    public Integer getAc() {
+        return ac;
+    }
+
+    public Integer getSpeed() {
+        return speed;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public String getRace() {
+        return race;
+    }
+
+    public String getClasss() {
+        return classs;
+    }
+
+    public Integer getLevl() {
+        return levl;
+    }
+
+    public static List<CharacterDTO> getDtos(List<Character> characters) {
+        List<CharacterDTO> cdtos = new ArrayList();
+        characters.forEach(character -> cdtos.add(new CharacterDTO(character)));
         return cdtos;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CharacterDTO{levl=").append(levl);
+        sb.append(", abilityScoreDTO=").append(abilityScoreDTO);
+        sb.append(", skillsDTO=").append(skillsDTO);
+        sb.append(", maxHp=").append(maxHp);
+        sb.append(", currentHP=").append(currentHP);
+        sb.append(", ac=").append(ac);
+        sb.append(", speed=").append(speed);
+        sb.append(", name=").append(name);
+        sb.append(", biography=").append(biography);
+        sb.append(", race=").append(race);
+        sb.append(", classs=").append(classs);
+        sb.append('}');
+        return sb.toString();
+    }
+
+
+
 }

@@ -15,10 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.persistence.ManyToOne;
 
-/**
- *
- * @author SJUBE
- */
+
 @Entity
 @Table(name = "characters")
 public class Character implements Serializable {
@@ -40,6 +37,8 @@ public class Character implements Serializable {
     private String classs;
     @OneToOne(cascade = CascadeType.ALL)
     private AbillityScores abillityScores;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Skills skills;
     @ManyToOne
     private Player player;
 //    @OneToOne(cascade = CascadeType.PERSIST)
@@ -47,7 +46,7 @@ public class Character implements Serializable {
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "character")
     private List<Inventory> inventory ;
 
-    public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
+    public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores, Skills skills) {
         this.lvl = lvl;
         this.maxHP = maxHP;
         this.currentHP = currentHP;
@@ -60,6 +59,8 @@ public class Character implements Serializable {
         this.abillityScores = abillityScores;
         abillityScores.setCharacter(this);
         this.inventory = new ArrayList<>();
+        this.skills = skills;
+        this.skills.setCharacter(this);
     }
 
     public Character() {
@@ -155,12 +156,14 @@ public class Character implements Serializable {
     public void setPlayer(Player player) {
         if (player != null) {
             this.player = player;
+
         }
     }
 
     public Player getPlayer() {
         return player;
     }
+
 
     public void addInventory(Inventory inventory) {
         if (inventory != null) {
@@ -179,6 +182,15 @@ public class Character implements Serializable {
     
     
 
+    public Skills getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Skills skills) {
+        this.skills = skills;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -193,6 +205,8 @@ public class Character implements Serializable {
         sb.append(", race=").append(race);
         sb.append(", classs=").append(classs);
         sb.append(", abillityScores=").append(abillityScores);
+        sb.append(", skills=").append(skills);
+        sb.append(", player=").append(player);
         sb.append('}');
         return sb.toString();
     }

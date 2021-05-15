@@ -11,6 +11,10 @@ import errorhandling.ExceptionDTO;
 import facades.CharacterFacade;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import dtos.PlayerDTO;
+import entities.AbillityScores;
+import entities.Character;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -43,6 +47,26 @@ public class CharacterResource {
         return GSON.toJson(asdto);
     }
 
+    @POST
+    @Path("createcharacter/{playerid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String createCharacter(@PathParam("playerid") String playerid, String json) {
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOPersisted = facade.createCharacter(chaDTO, playerid);
+        return GSON.toJson(chaDTOPersisted);
+    }
+
+    @PUT
+    @Path("updatecharacter/{characterID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateCharacter(@PathParam("characterID") int characterID, String json) throws Exception {
+        CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
+        CharacterDTO chaDTOUpdated = facade.updateCharacter(chaDTO, characterID);
+        return GSON.toJson(chaDTOUpdated);
+    }
+
     @Path("{characterid}/abillityscores")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,6 +75,31 @@ public class CharacterResource {
         AbillityScoresDTO aSDTO = new AbillityScoresDTO(GSON.fromJson(abillitySet, AbillityScores.class));
         CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
         return GSON.toJson(cdtoUpdated);
+    }
+    @Path("updatehp/{characterid}/{newhpvalue}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateHP(@PathParam("characterid") String characterID, @PathParam("newhpvalue") String newHPValue){
+        String hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
+        return GSON.toJson(hPValue);
+    }
+    
+        @Path("updatebio/{characterid}")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String updateBiography(@PathParam("characterid") int charc, String bio) throws Exception{
+        String bios = facade.updateBiography(bio, charc);
+        return GSON.toJson(bios);
+    }
+
+    @Path("searchbyrace/{race}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByRace(@PathParam("race") String race) {
+        List<CharacterDTO> chDTO = facade.searchByRace(race);
+        return GSON.toJson(chDTO);
     }
 
     @Path("{characterid}/inventory/{extraqtyforequipment}")
@@ -78,4 +127,20 @@ public class CharacterResource {
         return GSON.toJson(equipmentDTO);
     }
 
+    @Path("searchbyname/{name}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByName(@PathParam("name") String name) {
+        List<CharacterDTO> chDTO = facade.searchByName(name);
+        return GSON.toJson(chDTO);
+    }
+
+    @Path("searchbyplayer/{player}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String searchByPlayer(@PathParam("player") String player) {
+        List<CharacterDTO> chDTO = facade.searchByPlayer(player);
+        return GSON.toJson(chDTO);
+    }
+    
 }

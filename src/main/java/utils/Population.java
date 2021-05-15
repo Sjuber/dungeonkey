@@ -6,6 +6,8 @@ import entities.Character;
 import entities.AbillityScores;
 import entities.Equipment;
 import entities.Inventory;
+import entities.Skills;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,6 +24,8 @@ public class Population {
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
         Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+      ch1.addInventory(new Inventory(equipment, 1));
+       equipment.addInventory(ch1.getInventories().get(0));
         //ch1.getInventory().addEquipmentAndQty(equipment, 1);
         try {
             em.getTransaction().begin();
@@ -33,10 +37,12 @@ public class Population {
             //both.addRole(DMRole); // MAN KAN GODT HAVE BEGGE ROLLER CATHRINE !!!
             em.persist(playerRole);
             em.persist(DMRole);
-            em.persist(equipment);
+            //em.persist(equipment);
             player1.addCharacter(ch1);
-            em.persist(ch1);
+            //em.persist(ch1);
             em.persist(player1);
+          player1.addCharacter(ch1);
+          em.merge(player1);
             em.persist(DM);
             em.persist(player2);
             em.getTransaction().commit();
@@ -46,18 +52,23 @@ public class Population {
         }
     }
     
-    public static void populateWithEquipment() {
+   /* public static void populateWithEquipment() {
 
-        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
-        EntityManager em = emf.createEntityManager();
+
+    EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
+    EntityManager em = emf.createEntityManager();
+    
         Player player1 = new Player("Nikolaj", "Hamster16");
         Player DM = new Player("Cathrine", "Portraet11");
         Player player2 = new Player("Jens", "Skeletor69");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        Random randi = new Random(0);
+        Skills skils = new Skills(randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5));
+       Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1, skils);
         Equipment equipment = new Equipment("Helm Of Glory", 1.5);
         ch1.addInventory(new Inventory(equipment, 1));
         equipment.addInventory(ch1.getInventories().get(0));
+
         try {
             em.getTransaction().begin();
             Role playerRole = new Role("player");
@@ -80,10 +91,12 @@ public class Population {
         } finally {
             em.close();
         }
-    }
+    }*/
     
     public static void main(String[] args) {
-        populateWithEquipment();
+       // populateWithEquipment();
+      populate();
+      
     }
 /*
     public static void test() {
@@ -127,6 +140,13 @@ public class Population {
         } finally {
             em.close();
         }
+        */
 
-    }*/
+  }
+  
+    public static void main(String[] args) {
+        populate();
+    }
+
+  
 }
