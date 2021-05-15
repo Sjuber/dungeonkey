@@ -280,7 +280,8 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
             throw new Exception("There is no such equipment with the given name");
         }
         return new EquipmentDTO(equipment);
-
+    }
+    
     public String updateHP(int newHPValue, int CharacterId) {
         EntityManager em = emf.createEntityManager();
         Character characterWithNewHp;

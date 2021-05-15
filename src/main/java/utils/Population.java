@@ -22,7 +22,9 @@ public class Population {
         Player DM = new Player("Cathrine", "Portraet11");
         Player player2 = new Player("Jens", "Skeletor69");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
-        Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1);
+        Random randi = new Random(0);
+        Skills skils = new Skills(randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5));
+        Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1,skils);
         Equipment equipment = new Equipment("Helm Of Glory", 1.5);
       ch1.addInventory(new Inventory(equipment, 1));
        equipment.addInventory(ch1.getInventories().get(0));
@@ -141,12 +143,6 @@ public class Population {
             em.close();
         }
         */
-
-  }
-  
-    public static void main(String[] args) {
-        populate();
-    }
 
   
 }
