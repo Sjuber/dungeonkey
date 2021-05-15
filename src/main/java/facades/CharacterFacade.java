@@ -179,7 +179,7 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
                 equipment = em.find(Equipment.class, edto.getName());
                 if (equipment == null) {
                     character = em.find(Character.class, characterID);
-                    equipmentNew = new Equipment(edto.getName(), edto.getWeight());
+                    equipmentNew = new Equipment(edto.getName(), edto.getWeight(), edto.getCatergory());
 
                     try {
                         emPersist.getTransaction().begin();
