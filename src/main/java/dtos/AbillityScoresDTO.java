@@ -4,12 +4,12 @@ import entities.AbillityScores;
 
 public class AbillityScoresDTO {
 
-    private Integer strength;
-    private Integer dexterity;
-    private Integer constitution;
-    private Integer wisdom;
-    private Integer intelligence;
-    private Integer charisma;
+    private int strength;
+    private int dexterity;
+    private int constitution;
+    private int wisdom;
+    private int intelligence;
+    private int charisma;
 
     public AbillityScoresDTO(AbillityScores abilityScores) {
         this.strength = abilityScores.getStrength();

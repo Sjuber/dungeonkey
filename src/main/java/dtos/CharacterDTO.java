@@ -6,27 +6,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterDTO {
-
-    //private int id; 
-    private Integer levl;
-    private AbillityScoresDTO abilityScoreDTO;
-    private SkillsDTO skillsDTO;
-    private PlayerDTO playerDTO;
-    private Integer maxHp;
-    private Integer currentHP;
-    private Integer ac;
-    private Integer speed;
+  
+    private int levl;
+    private int maxHP;
+    private int currentHP;
+    private int ac;
+    private int speed;
     private String name;
     private String biography;
     private String race;
     private String classs;
+    private AbillityScoresDTO abilityScoreDTO;
+    private SkillsDTO skillsDTO;
+    private PlayerDTO playerDTO;
+    private List<InventoryDTO> inventoryDTO;
 
     public CharacterDTO(Character ch) {
         this.levl = ch.getLvl();
         this.abilityScoreDTO = new AbillityScoresDTO(ch.getAbillityScores());
+        this.inventoryDTO = new ArrayList<>();
+        ch.getInventories().forEach(inventory -> this.inventoryDTO.add(new InventoryDTO(inventory)));
         this.skillsDTO = new SkillsDTO(ch.getSkills());
         this.playerDTO = new PlayerDTO(ch.getPlayer());
-        this.maxHp = ch.getMaxHP();
+        this.maxHP = ch.getMaxHP();
         this.currentHP = ch.getCurrentHP();
         this.ac = ch.getAc();
         this.speed = ch.getSpeed();
@@ -39,9 +41,6 @@ public class CharacterDTO {
     public CharacterDTO() {
     }
 
-    /*public int getId() {
-        return id;
-    }*/
     public SkillsDTO getSkillsDTO() {
         return skillsDTO;
     }
@@ -54,8 +53,12 @@ public class CharacterDTO {
         return playerDTO;
     }
 
+    public List<InventoryDTO> getInventoryDTO() {
+        return inventoryDTO;
+    }
+   
     public Integer getMaxHp() {
-        return maxHp;
+        return maxHP;
     }
 
     public Integer getCurrentHP() {
@@ -92,7 +95,7 @@ public class CharacterDTO {
 
     public static List<CharacterDTO> getDtos(List<Character> characters) {
         List<CharacterDTO> cdtos = new ArrayList();
-        characters.forEach(character -> cdtos.add(new CharacterDTO(character)));
+        characters.forEach(character -> {cdtos.add(new CharacterDTO(character));});
         return cdtos;
     }
 
@@ -102,7 +105,7 @@ public class CharacterDTO {
         sb.append("CharacterDTO{levl=").append(levl);
         sb.append(", abilityScoreDTO=").append(abilityScoreDTO);
         sb.append(", skillsDTO=").append(skillsDTO);
-        sb.append(", maxHp=").append(maxHp);
+        sb.append(", maxHp=").append(maxHP);
         sb.append(", currentHP=").append(currentHP);
         sb.append(", ac=").append(ac);
         sb.append(", speed=").append(speed);
