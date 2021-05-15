@@ -21,7 +21,7 @@ public class Equipment implements Serializable {
     @Basic(optional = false)
     private String name;
     private double weight;
-    @OneToMany(mappedBy = "equipment")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "equipment")
     private List<Inventory> inventories = new ArrayList<>();
 
     public Equipment(String name, double weight) {

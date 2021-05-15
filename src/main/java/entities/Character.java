@@ -38,13 +38,13 @@ public class Character implements Serializable {
     private String biography;
     private String race;
     private String classs;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private AbillityScores abillityScores;
     @ManyToOne
     private Player player;
 //    @OneToOne(cascade = CascadeType.PERSIST)
 //    private Inventory inventory;
-    @OneToMany(mappedBy = "character")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "character")
     private List<Inventory> inventory ;
 
     public Character(Integer lvl, Integer maxHP, Integer currentHP, Integer ac, Integer speed, String name, String biography, String race, String classs, AbillityScores abillityScores) {
