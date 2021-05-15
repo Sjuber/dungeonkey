@@ -57,7 +57,6 @@ public class CharacterFacadeIT {
             emDelete.createQuery("DELETE FROM Character").executeUpdate();
             emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.createQuery("DELETE FROM Role").executeUpdate();
-            emDelete.createQuery("DELETE FROM Player").executeUpdate();
             emDelete.getTransaction().commit();
         } finally {
             emDelete.close();
