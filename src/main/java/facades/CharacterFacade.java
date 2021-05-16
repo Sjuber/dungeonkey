@@ -16,6 +16,7 @@ import entities.Skills;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
+import org.glassfish.jersey.server.wadl.internal.generators.resourcedoc.xhtml.Elements;
 import security.errorhandling.AuthenticationException;
 
 public class CharacterFacade {
@@ -31,24 +32,35 @@ public class CharacterFacade {
         return instance;
     }
 
-    public CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) {
+    //Needs negative tests
+    public CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character dbCharacter;
-        try {
-            em.getTransaction().begin();
-            dbCharacter = em.find(Character.class, characterID);
-            AbillityScores aSFromDB = em.find(AbillityScores.class, dbCharacter.getAbillityScores().getId());
-            aSFromDB.setCharisma(aSDTONew.getCharisma());
-            aSFromDB.setStrength(aSDTONew.getStrength());
-            aSFromDB.setDexterity(aSDTONew.getDexterity());
-            aSFromDB.setConstitution(aSDTONew.getConstitution());
-            aSFromDB.setIntelligence(aSDTONew.getIntelligence());
-            aSFromDB.setWisdom(aSDTONew.getWisdom());
-            aSFromDB.setCharacter(dbCharacter);
-            em.merge(dbCharacter);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+        if (aSDTONew == null || characterID < 0) {
+            throw new Exception("You must send a given abilityscore to change to and the characters ID must be 1 or higher");
+        } else {
+            try {
+                em.getTransaction().begin();
+                dbCharacter = em.find(Character.class, characterID);
+                if (dbCharacter == null) {
+                    throw new Exception("The character ID: " + characterID + " couldn't find any character in the database");
+                } else {
+                    AbillityScores aSFromDB = em.find(AbillityScores.class, dbCharacter.getAbillityScores().getId());
+                    em.remove(aSFromDB);
+                    aSFromDB.setCharisma(aSDTONew.getCharisma());
+                    aSFromDB.setStrength(aSDTONew.getStrength());
+                    aSFromDB.setDexterity(aSDTONew.getDexterity());
+                    aSFromDB.setConstitution(aSDTONew.getConstitution());
+                    aSFromDB.setIntelligence(aSDTONew.getIntelligence());
+                    aSFromDB.setWisdom(aSDTONew.getWisdom());
+                    aSFromDB.setCharacter(dbCharacter);
+                    em.merge(dbCharacter);
+                    em.getTransaction().commit();
+                }
+            } finally {
+                em.close();
+            }
+
         }
         return new CharacterDTO(dbCharacter);
     }
@@ -82,55 +94,84 @@ public class CharacterFacade {
         return new PlayerDTO(dbPlayer);
     }
 
-    public CharacterDTO createCharacter(CharacterDTO chDTO, String playerId) {
-        EntityManager em = emf.createEntityManager();
-        AbillityScoresDTO abisc = chDTO.getAbilityScoreDTO();
-        AbillityScores abiscR = new AbillityScores(abisc.getStrength(), abisc.getDexterity(), abisc.getConstitution(), abisc.getWisdom(), abisc.getIntelligence(), abisc.getCharisma());
-        SkillsDTO sksDTO = chDTO.getSkillsDTO();
-        Skills skilR = new Skills(sksDTO.getAnimal_Handling(), sksDTO.getArcana(), sksDTO.getAthletics(), sksDTO.getDeception(), sksDTO.getHistory(), sksDTO.getInsight(), sksDTO.getIntimidation(), sksDTO.getInvestigation(), sksDTO.getMedicine(), sksDTO.getNature(), sksDTO.getPerception(), sksDTO.getPerformance(), sksDTO.getPersuasion(), sksDTO.getReligion(), sksDTO.getSleight_of_Hand(), sksDTO.getStealth(), sksDTO.getSurvival());
-        Player dbPlayer = em.find(Player.class, playerId);
-        Character ch = new Character(chDTO.getLevl(), chDTO.getMaxHp(), chDTO.getCurrentHP(), chDTO.getAc(), chDTO.getSpeed(), chDTO.getName(), chDTO.getBiography(), chDTO.getRace(), chDTO.getClasss(), abiscR, skilR);
-        dbPlayer.addCharacter(ch);
-        em.getTransaction().begin();
-        em.persist(ch);
-        em.getTransaction().commit();
-        return new CharacterDTO(ch);
+    //Need nagative tests
+    public CharacterDTO createCharacter(CharacterDTO chDTO, String playerId) throws Exception {
+        if (chDTO == null) {
+            throw new Exception("There must be given a character to create");
+        }
+        if (playerId == null) {
+            throw new Exception("You must give a playername to create character");
+        } else {
+            EntityManager em = emf.createEntityManager();
+            AbillityScoresDTO abisc = chDTO.getAbilityScoreDTO();
+            AbillityScores abiscR = new AbillityScores(abisc.getStrength(), abisc.getDexterity(), abisc.getConstitution(), abisc.getWisdom(), abisc.getIntelligence(), abisc.getCharisma());
+            SkillsDTO sksDTO = chDTO.getSkillsDTO();
+            Skills skilR = new Skills(sksDTO.getAnimal_Handling(), sksDTO.getArcana(), sksDTO.getAthletics(), sksDTO.getDeception(), sksDTO.getHistory(), sksDTO.getInsight(), sksDTO.getIntimidation(), sksDTO.getInvestigation(), sksDTO.getMedicine(), sksDTO.getNature(), sksDTO.getPerception(), sksDTO.getPerformance(), sksDTO.getPersuasion(), sksDTO.getReligion(), sksDTO.getSleight_of_Hand(), sksDTO.getStealth(), sksDTO.getSurvival());
+            Player dbPlayer = em.find(Player.class, playerId);
+            Character ch = new Character(chDTO.getLevl(), chDTO.getMaxHp(), chDTO.getCurrentHP(), chDTO.getAc(), chDTO.getSpeed(), chDTO.getName(), chDTO.getBiography(), chDTO.getRace(), chDTO.getClasss(), abiscR, skilR);
+            dbPlayer.addCharacter(ch);
+            if (ch.getAbillityScores() == null || ch.getAc() == null || ch.getClasss() == null || ch.getMaxHP() < 0 || ch.getSkills() == null
+                    || ch.getRace() == null || ch.getLvl() == null || ch.getName() == null) {
+                throw new Exception("Character must contain all this elements:\n"
+                        + " - Name"
+                        + " - Race"
+                        + " - Level"
+                        + " - AC value"
+                        + " - Class"
+                        + " - Max value for healthpoints (Max HP)"
+                        + " - Skills"
+                        + " - Abilityscores values"
+                );
+            } else {
+                em.getTransaction().begin();
+                em.persist(ch);
+                em.getTransaction().commit();
+            }
+            return new CharacterDTO(ch);
+        }
     }
 
-    public CharacterDTO updateCharacter(CharacterDTO chaDTONeo, int characterID) throws Exception {
+    //TODO !!!! MAKE A METHOD FOR PLAYER TO CHANGE
+    //Needs negative testing
+    public CharacterDTO updateCharacterByDM(CharacterDTO chaDTONeo, int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
-        Character asFromDB;
-        try {
-            em.getTransaction().begin();
-            asFromDB = em.find(Character.class, characterID);
-            if (asFromDB == null) {
-                throw new Exception("The character is not in the database");
+        Character asFromDB = null;
+        if (chaDTONeo == null || characterID < 0) {
+            throw new Exception("You must send a given character to change to and the old characters ID must be 1 or higher");
+        } else {
+            try {
+                em.getTransaction().begin();
+                asFromDB = em.find(Character.class, characterID);
+                if (asFromDB == null) {
+                    throw new Exception("The character is not in the database");
+                }
+                int str = chaDTONeo.getAbilityScoreDTO().getStrength();
+                int dex = chaDTONeo.getAbilityScoreDTO().getDexterity();
+                int con = chaDTONeo.getAbilityScoreDTO().getConstitution();
+                int wis = chaDTONeo.getAbilityScoreDTO().getWisdom();
+                int inte = chaDTONeo.getAbilityScoreDTO().getIntelligence();
+                int cha = chaDTONeo.getAbilityScoreDTO().getCharisma();
+                AbillityScores abS = new AbillityScores(str, dex, con, wis, inte, cha);
+                asFromDB.setAbillityScores(abS);
+                asFromDB.setLvl(chaDTONeo.getLevl()); // change
+                asFromDB.setMaxHP(chaDTONeo.getMaxHp()); // change
+                asFromDB.setCurrentHP(chaDTONeo.getCurrentHP()); // change
+                asFromDB.setAc(chaDTONeo.getAc()); // change
+                asFromDB.setSpeed(chaDTONeo.getSpeed()); // change
+                asFromDB.setName(chaDTONeo.getName());
+                asFromDB.setBiography(chaDTONeo.getBiography());
+                asFromDB.setRace(chaDTONeo.getRace());
+                asFromDB.setClasss(chaDTONeo.getClasss());
+                em.merge(asFromDB);
+                em.getTransaction().commit();
+            } finally {
+                em.close();
             }
-            int str = chaDTONeo.getAbilityScoreDTO().getStrength();
-            int dex = chaDTONeo.getAbilityScoreDTO().getDexterity();
-            int con = chaDTONeo.getAbilityScoreDTO().getConstitution();
-            int wis = chaDTONeo.getAbilityScoreDTO().getWisdom();
-            int inte = chaDTONeo.getAbilityScoreDTO().getIntelligence();
-            int cha = chaDTONeo.getAbilityScoreDTO().getCharisma();
-            AbillityScores abS = new AbillityScores(str, dex, con, wis, inte, cha);
-            asFromDB.setAbillityScores(abS);
-            asFromDB.setLvl(chaDTONeo.getLevl()); // change
-            asFromDB.setMaxHP(chaDTONeo.getMaxHp()); // change
-            asFromDB.setCurrentHP(chaDTONeo.getCurrentHP()); // change
-            asFromDB.setAc(chaDTONeo.getAc()); // change
-            asFromDB.setSpeed(chaDTONeo.getSpeed()); // change
-            asFromDB.setName(chaDTONeo.getName());
-            asFromDB.setBiography(chaDTONeo.getBiography());
-            asFromDB.setRace(chaDTONeo.getRace());
-            asFromDB.setClasss(chaDTONeo.getClasss());
-            em.merge(asFromDB);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
         }
         return new CharacterDTO(asFromDB);
     }
 
+    //Needs Negative testing
     public String updateBiography(String bio, int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character asFromDB;
@@ -138,31 +179,40 @@ public class CharacterFacade {
             em.getTransaction().begin();
             asFromDB = em.find(Character.class, characterID);
             if (asFromDB == null) {
-                throw new Exception("The character is not in the database");
+                throw new Exception("The character is not in the database by that given ID");
+            } else {
+                asFromDB.setBiography(bio);
+                em.merge(asFromDB);
+                em.getTransaction().commit();
             }
-            asFromDB.setBiography(bio);
-            em.merge(asFromDB);
-            em.getTransaction().commit();
         } finally {
             em.close();
         }
         return bio;
     }
 
-    public AbillityScoresDTO getASByCharacter(int characterID) {
+    public AbillityScoresDTO getASByCharacter(int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
-        Character character;
-        try {
-            em.getTransaction().begin();
-            character = em.find(Character.class, characterID);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+        Character character = null;
+        if (characterID > 0) {
+            try {
+                em.getTransaction().begin();
+                character = em.find(Character.class, characterID);
+                if (character == null) {
+                    throw new Exception("There is no such character in the databse by that given ID");
+                }
+                em.getTransaction().commit();
+            } finally {
+                em.close();
+            }
+
+        } else {
+            throw new Exception("The given ID for character must be 1 or higher");
         }
         return new AbillityScoresDTO(character.getAbillityScores());
     }
 
-public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto, int qty) throws Exception {    
+    public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto, int qty) throws Exception {
         EntityManager em = emf.createEntityManager();
         EntityManager emPersist = emf.createEntityManager();
         Character character = null;
@@ -183,8 +233,8 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
 
                     try {
                         emPersist.getTransaction().begin();
-                       // emPersist.persist(equipmentNew);
-                       inventory = new Inventory(equipmentNew,qty);
+                        // emPersist.persist(equipmentNew);
+                        inventory = new Inventory(equipmentNew, qty);
                         character.addInventory(inventory);
                         emPersist.merge(inventory);
                         emPersist.merge(character);
@@ -192,7 +242,7 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
                     } finally {
                         emPersist.close();
                     }
-                    
+
                 } else {
                     TypedQuery<Inventory> inventoryQ = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
                     inventoryQ.setParameter("equipmentname", edto.getName());
@@ -212,7 +262,7 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
                         em.merge(character);
                     }
                 }
-                if (equipment!=null && equipment.getInventories().isEmpty()) {
+                if (equipment != null && equipment.getInventories().isEmpty()) {
                     em.remove(equipment);
                 }
                 character = em.find(Character.class, characterID);
@@ -224,7 +274,6 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         return new CharacterDTO(character);
     }
 
-  
     public List<CharacterDTO> searchByName(String characterName) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class
@@ -266,7 +315,6 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         return resultAsDTO;
     }
 
-
     public EquipmentDTO getEquipment(String equipmentName) throws Exception {
         EntityManager em = emf.createEntityManager();
         Equipment equipment = null;
@@ -282,27 +330,35 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         }
         return new EquipmentDTO(equipment);
     }
-    
-    public String updateHP(int newHPValue, int CharacterId) {
+
+    //Needs negative testing
+    public String updateHP(int newHPValue, int CharacterId) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character characterWithNewHp;
-        try {
-            em.getTransaction().begin();
-            Character character = em.find(Character.class, CharacterId);
-            character.setCurrentHP(newHPValue);
-            em.merge(character);
-            em.getTransaction().commit();
-            characterWithNewHp = em.find(Character.class, CharacterId);
+        Character character = null;
+        if (!(CharacterId > 0)) {
+            throw new Exception("Character ID can not be 0 or less - and it should be a number");
+        } else {
+            try {
+                em.getTransaction().begin();
+                character = em.find(Character.class, CharacterId);
+                if (character == null) {
+                    throw new Exception("Could not find a character with the given ID number");
+                }
+                character.setCurrentHP(newHPValue);
+                em.merge(character);
+                em.getTransaction().commit();
+                characterWithNewHp = em.find(Character.class, CharacterId);
 
-        } finally {
-            em.close();
+            } finally {
+                em.close();
+            }
         }
         return characterWithNewHp.getCurrentHP() + "";
 
-
     }
-    
-        public Player getVeryfiedUser(String username, String password) throws AuthenticationException {
+
+    public Player getVeryfiedUser(String username, String password) throws AuthenticationException {
         EntityManager em = emf.createEntityManager();
         Player player;
         try {
@@ -316,16 +372,17 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         return player;
     }
 
-        public PlayerDTO getPlayerByName(String playerName) {
+    public PlayerDTO getPlayerByName(String playerName) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
         );
         playerQuery.setParameter("name", playerName);
         Player player = playerQuery.getSingleResult();
-        
+
         return new PlayerDTO(player);
     }
-        public List<PlayerDTO> getPlayers() {
+
+    public List<PlayerDTO> getPlayers() {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p", Player.class);
         List<Player> players = playerQuery.getResultList();
