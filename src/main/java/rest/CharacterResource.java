@@ -12,8 +12,10 @@ import facades.CharacterFacade;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dtos.PlayerDTO;
+import dtos.SkillsDTO;
 import entities.AbillityScores;
 import entities.Character;
+import entities.Skills;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -194,4 +196,36 @@ public class CharacterResource {
         return GSON.toJson(chDTO);
     }
 
+    @Path("{characterid}/skills")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getSkillsForCharacter(@PathParam("characterid") int characterid) {
+        SkillsDTO skillsDTO;
+        ExceptionDTO exceptionDTO;
+        try {
+            skillsDTO = facade.getSkillsFromACharacter(characterid);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
+        return GSON.toJson(skillsDTO);
+    }
+    
+    @Path("{characterid}/skills")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public String updateSkillsForCharacter(@PathParam("characterid") int characterid, String skillsDTOjson) {
+        SkillsDTO skillsDTO;
+        SkillsDTO skillsDTOToBecome;
+        ExceptionDTO exceptionDTO;
+        try {
+            skillsDTOToBecome = new SkillsDTO(GSON.fromJson(skillsDTOjson, Skills.class));
+            skillsDTO = facade.updateSkillsForCharacter(characterid, skillsDTOToBecome);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
+        return GSON.toJson(skillsDTO);
+    }
+    
 }
