@@ -225,24 +225,32 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
     }
 
   
-    public List<CharacterDTO> searchByName(String characterName) {
+    public List<CharacterDTO> searchByName(String characterName) throws Exception {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class
         );
         character.setParameter("name", characterName);
+        
         List<Character> resultlist = character.getResultList();
+        
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+        if(resultlist.isEmpty()){
+            throw new Exception("No characters with that name were found");
+        }
 
         return resultAsDTO;
     }
 
-    public List<CharacterDTO> searchByRace(String characterRace) {
+    public List<CharacterDTO> searchByRace(String characterRace) throws Exception {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.race =:race", Character.class
         );
         character.setParameter("race", characterRace);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
+        if(resultlist.isEmpty()){
+            throw new Exception("No characters with that race were found");
+        }
 
         return resultAsDTO;
     }
@@ -256,12 +264,15 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
 //        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
 //        return resultAsDTO;
 //    }
-    public List<CharacterDTO> searchByPlayer(String playerName) {
+    public List<CharacterDTO> searchByPlayer(String playerName) throws Exception {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class
         );
         query.setParameter("playername", playerName);
         List<Character> resultlist = query.getResultList();
+        if(resultlist.isEmpty()){
+            throw new Exception("No players with that name were found");
+        }
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
         return resultAsDTO;
     }
@@ -316,12 +327,15 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         return player;
     }
 
-        public PlayerDTO getPlayerByName(String playerName) {
+        public PlayerDTO getPlayerByName(String playerName) throws Exception {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
         );
         playerQuery.setParameter("name", playerName);
         Player player = playerQuery.getSingleResult();
+        if(player == null){
+            throw new Exception("No characters with that name were found");
+        }
         
         return new PlayerDTO(player);
     }
