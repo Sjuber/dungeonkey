@@ -316,4 +316,13 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         return player;
     }
 
+        public PlayerDTO getPlayerByName(String playerName) {
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
+        );
+        playerQuery.setParameter("name", playerName);
+        Player player = playerQuery.getSingleResult();
+        
+        return new PlayerDTO(player);
+    }
 }

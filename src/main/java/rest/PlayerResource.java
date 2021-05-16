@@ -52,5 +52,13 @@ public class PlayerResource {
         PlayerDTO pDTOToBeUpdated= facade.updatePlayer(pDTO, pDTO.getUsername());
         return GSON.toJson(pDTOToBeUpdated);
     }
+    
+    @GET
+    @Path("{playerid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPlayer(@PathParam("playerid") String playerName) throws Exception {
+        PlayerDTO playerDTO = facade.getPlayerByName(playerName);
+        return GSON.toJson(playerDTO);
+    }
 
 }
