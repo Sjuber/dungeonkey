@@ -2,6 +2,8 @@
 package dtos;
 
 import entities.Player;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class PlayerDTO {
@@ -33,11 +35,17 @@ public class PlayerDTO {
         this.password = password;
     }
 
+    public static List<PlayerDTO> getDtos(List<Player> players) {
+        List<PlayerDTO> cdtos = new ArrayList();
+        players.forEach(player -> {cdtos.add(new PlayerDTO(player));});
+        return cdtos;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("PlayerDTO{username=").append(username);
-        sb.append(", password=").append(password);
+        //sb.append(", password=").append(password);
         sb.append('}');
         return sb.toString();
     }

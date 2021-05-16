@@ -325,4 +325,11 @@ public CharacterDTO updateCharactersInventory(int characterID, EquipmentDTO edto
         
         return new PlayerDTO(player);
     }
+        public List<PlayerDTO> getPlayers() {
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p", Player.class);
+        List<Player> players = playerQuery.getResultList();
+        List<PlayerDTO> playerDTOs = PlayerDTO.getDtos(players);
+        return playerDTOs;
+    }
 }
