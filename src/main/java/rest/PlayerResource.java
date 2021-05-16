@@ -27,11 +27,11 @@ public class PlayerResource {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final CharacterFacade facade = CharacterFacade.getCharacterFacade(EMF);
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String greetings() {
-        return "Hello \n Welcome to DungeonKey API \n - for players :D ";
-    }
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public String greetings() {
+//        return "Hello \n Welcome to DungeonKey API \n - for players :D ";
+//    }
 
     @POST
     @Path("createplayer")
@@ -58,6 +58,13 @@ public class PlayerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String getPlayer(@PathParam("playerid") String playerName) throws Exception {
         PlayerDTO playerDTO = facade.getPlayerByName(playerName);
+        return GSON.toJson(playerDTO);
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPlayers() {
+        List<PlayerDTO> playerDTO = facade.getPlayers();
         return GSON.toJson(playerDTO);
     }
 
