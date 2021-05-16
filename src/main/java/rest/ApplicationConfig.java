@@ -29,7 +29,9 @@ public class ApplicationConfig extends Application {
         resources.add(rest.RenameMeResource.class);
         //resources.add(security.JWTAuthenticationFilter.class);
         //resources.add(security.LoginEndpoint.class);
+        resources.add(rest.dnd5eapiRessource.class);
         resources.add(security.JWTAuthenticationFilter.class);
+        resources.add(security.LoginEndpoint.class);
         resources.add(security.RolesAllowedFilter.class);
         resources.add(security.errorhandling.AuthenticationExceptionMapper.class);
         resources.add(security.errorhandling.NotAuthorizedExceptionMapper.class);

@@ -21,13 +21,15 @@ public class Equipment implements Serializable {
     @Basic(optional = false)
     private String name;
     private double weight;
+    private String category; // To be developed using polyphormism instead
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "equipment")
     private List<Inventory> inventories = new ArrayList<>();
 
-    public Equipment(String name, double weight) {
+    public Equipment(String name, double weight, String category) {
         this.inventories = new ArrayList<>();
         this.name = name;
         this.weight = weight;
+        this.category = category;
     }
 
     public Equipment() {
@@ -48,6 +50,10 @@ public class Equipment implements Serializable {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public String getCategory() {
+        return category;
     }
     
     public void addInventory(Inventory inventory) {

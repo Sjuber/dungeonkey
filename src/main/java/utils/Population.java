@@ -25,7 +25,7 @@ public class Population {
         Random randi = new Random(0);
         Skills skils = new Skills(randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5), randi.nextInt(5));
         Character ch1 = new Character(5, 104, 85, 17, 30, "Damascus", "He was a valiant paladin.", "orc", "paladin", abiSco1,skils);
-        Equipment equipment = new Equipment("Helm Of Glory", 1.5);
+        Equipment equipment = new Equipment("Helm Of Glory", 1.5, "Armor");
       ch1.addInventory(new Inventory(equipment, 1));
        equipment.addInventory(ch1.getInventories().get(0));
         //ch1.getInventory().addEquipmentAndQty(equipment, 1);
