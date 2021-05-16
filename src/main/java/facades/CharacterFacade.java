@@ -437,4 +437,6 @@ public class CharacterFacade {
             return new SkillsDTO(characterNew.getSkills());
         }
     }
+    
+    
 }
