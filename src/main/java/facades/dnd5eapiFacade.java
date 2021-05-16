@@ -28,9 +28,10 @@ public class dnd5eapiFacade {
     
     public EquipmentDTO getEquipmentDTOFromEksternAPI(String equipmentName, JsonReader jsonReader) throws IOException{
         JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/"+equipmentName);
-        EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(jSONObject.get("equipment_category").toString(), EquipmentCategory.class));
-        String weight = (String)jSONObject.get("weight");
-        return new EquipmentDTO(new Equipment(""+jSONObject.get("index"), Double.parseDouble(weight) ,equipmentCatagoryDTO.getName()));
+        String jsonObjectCat = jSONObject.get("equipment_category").toString();
+        EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(jsonObjectCat, EquipmentCategory.class));
+        Object weight = jSONObject.get("weight");
+        return new EquipmentDTO(new Equipment(""+jSONObject.get("index"), Double.parseDouble(weight.toString()) ,equipmentCatagoryDTO.getName()));
     }
 
 }

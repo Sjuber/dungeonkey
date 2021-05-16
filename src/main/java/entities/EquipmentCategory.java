@@ -32,5 +32,19 @@ public class EquipmentCategory implements Serializable {
     public int getId() {
         return id;
     }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+    
+    
     
 }
