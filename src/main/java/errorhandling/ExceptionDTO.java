@@ -17,4 +17,10 @@ public class ExceptionDTO {
         return message;
     }
 
+    @Override
+    public String toString() {
+        return "Error:" + code + 
+                "\n" + message;
+    }
+
 }

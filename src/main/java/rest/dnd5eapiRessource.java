@@ -8,6 +8,7 @@ import dtos.EquipmentDTO;
 import facades.CharacterFacade;
 import facades.dnd5eapiFacade;
 import java.io.IOException;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,7 +19,7 @@ import org.json.JSONObject;
 import utils.EMF_Creator;
 import utils.JsonReader;
 
-@Path("dnd5eAPIFetch")
+@Path("dnd5eapifetch")
 public class dnd5eapiRessource {
     
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
@@ -29,9 +30,17 @@ public class dnd5eapiRessource {
     @Path("equipment/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getASByCharacter(@PathParam("equipmentname") String equipmentname) throws IOException {
+    public String getEquipment(@PathParam("equipmentname") String equipmentname) throws IOException {
         EquipmentDTO edto = facade.getEquipmentDTOFromEksternAPI(equipmentname, jsonReader);
         return GSON.toJson(edto);
     }
+    
+//    @Path("equipments")
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public String getEquipments() throws IOException {
+//        List<EquipmentDTO> edtos = facade.getEquipmentDTOsFromAPI(jsonReader);
+//        return GSON.toJson(edtos);
+//    }
     
 }
