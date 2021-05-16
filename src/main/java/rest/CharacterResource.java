@@ -98,7 +98,13 @@ public class CharacterResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String searchByRace(@PathParam("race") String race) {
-        List<CharacterDTO> chDTO = facade.searchByRace(race);
+        List<CharacterDTO> chDTO;
+        try {
+            chDTO = facade.searchByRace(race);
+        } catch (Exception ex) {
+            ExceptionDTO exDto = new ExceptionDTO(404, ex.getMessage());
+            return exDto.toString();
+        }
         return GSON.toJson(chDTO);
     }
 
@@ -137,16 +143,28 @@ public class CharacterResource {
     @Path("searchbyname/{name}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String searchByName(@PathParam("name") String name) {
-        List<CharacterDTO> chDTO = facade.searchByName(name);
+    public String searchByName(@PathParam("name") String name) throws Exception {
+        List<CharacterDTO> chDTO;
+        try {
+            chDTO = facade.searchByName(name);
+        } catch (Exception ex) {
+            ExceptionDTO exDto = new ExceptionDTO(404, ex.getMessage());
+            return exDto.toString();
+        }
         return GSON.toJson(chDTO);
     }
 
     @Path("searchbyplayer/{player}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String searchByPlayer(@PathParam("player") String player) {
-        List<CharacterDTO> chDTO = facade.searchByPlayer(player);
+    public String searchByPlayer(@PathParam("player") String player) throws Exception {
+        List<CharacterDTO> chDTO;
+        try {
+            chDTO = facade.searchByPlayer(player);
+        } catch (Exception ex) {
+            ExceptionDTO exDto = new ExceptionDTO(404, ex.getMessage());
+            return exDto.toString();
+        }
         return GSON.toJson(chDTO);
     }
     
