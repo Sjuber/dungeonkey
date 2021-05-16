@@ -8,6 +8,7 @@ import dtos.EquipmentDTO;
 import entities.Equipment;
 import entities.EquipmentCategory;
 import java.io.IOException;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import org.json.JSONObject;
 import utils.JsonReader;
@@ -33,5 +34,13 @@ public class dnd5eapiFacade {
         Object weight = jSONObject.get("weight");
         return new EquipmentDTO(new Equipment(""+jSONObject.get("index"), Double.parseDouble(weight.toString()) ,equipmentCatagoryDTO.getName()));
     }
+
+//    public List<EquipmentDTO> getEquipmentDTOsFromAPI(JsonReader jsonReader) throws IOException {
+//        JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/");
+//        Object jsonObjectResult = jSONObject.get("results");
+//        String resultObject = GSON.toJson(jsonObjectResult.toString());
+//        GSON.fromJson(resultObject, ArrayList<EquipmentCategory.class);
+//        EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(, EquipmentCategory.class));
+//    }
 
 }

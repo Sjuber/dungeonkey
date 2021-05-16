@@ -115,15 +115,22 @@ public class CharacterResource {
             return GSON.toJson(cdtoUpdated);
         } catch (Exception ex) {
             exceptionDTO = new ExceptionDTO(404, ex.getMessage());
+            return exceptionDTO.toString();
         }
-        return exceptionDTO.getMessage();
     }
 
     @Path("inventory/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipment(@PathParam("equipmentname") String equipmentName) throws Exception {
-        EquipmentDTO equipmentDTO = facade.getEquipment(equipmentName);
+    public String getEquipment(@PathParam("equipmentname") String equipmentName) {
+        EquipmentDTO equipmentDTO = null;
+        ExceptionDTO exceptionDTO;
+        try {
+            equipmentDTO = facade.getEquipment(equipmentName);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
         return GSON.toJson(equipmentDTO);
     }
 
