@@ -37,7 +37,7 @@ public class dnd5eapiRessource {
         EquipmentDTO edto;
             try {
                 edto = facade.getEquipmentDTOFromAPI(equipmentname, jsonReader);
-            } catch (Exception ex) {
+            } catch (Exception ex ) {
                 ExceptionDTO edto1 = new ExceptionDTO(404, ex.getMessage());
                 return ex.toString();
             }
