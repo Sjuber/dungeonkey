@@ -16,6 +16,7 @@ import dtos.SkillsDTO;
 import entities.AbillityScores;
 import entities.Character;
 import entities.Skills;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -165,19 +166,19 @@ public class CharacterResource {
         }
     }
 
-    @Path("inventory/{equipmentname}")
+    @Path("{characterid}/inventory/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipment(@PathParam("equipmentname") String equipmentName) {
-        EquipmentDTO equipmentDTO = null;
+    public String getEquipment(@PathParam("characterid") int characterID, @PathParam("equipmentname") String equipmentName) {
+        List<EquipmentDTO> equipmentDTOs = new ArrayList<>();
         ExceptionDTO exceptionDTO;
         try {
-            equipmentDTO = facade.getEquipment(equipmentName);
+            equipmentDTOs = facade.getEquipmentsForCharacter(characterID);
         } catch (Exception e) {
             exceptionDTO = new ExceptionDTO(404, e.getMessage());
             return exceptionDTO.toString();
         }
-        return GSON.toJson(equipmentDTO);
+        return GSON.toJson(equipmentDTOs);
     }
 
     @Path("searchbyname/{name}")

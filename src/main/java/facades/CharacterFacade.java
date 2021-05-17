@@ -325,24 +325,27 @@ public class CharacterFacade {
         return resultAsDTO;
     }
 
-    public EquipmentDTO getEquipment(String equipmentName) throws Exception {
+    public List<EquipmentDTO> getEquipmentsForCharacter( int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
-        Equipment equipment = null;
-        if (equipmentName == null) {
-            throw new Exception("You must send a given name of equitpment to change to");
+        Character character = null;
+        List<EquipmentDTO> edtos = new ArrayList<>();
+        if (characterID<=0) {
+            throw new Exception("The given character ID should be 1 or higher");
         } else {
             try {
                 em.getTransaction().begin();
-                equipment = em.find(Equipment.class,
-                        equipmentName);
+                character = em.find(Character.class,characterID);
             } finally {
                 em.close();
             }
-            if (equipment == null) {
-                throw new Exception("There is no such equipment with the given name");
+            if (character == null) {
+                throw new Exception("There is no such character in the database with the given ID");
             }
         }
-        return new EquipmentDTO(equipment);
+        for (Inventory inventory : character.getInventories()) {
+           edtos.add(new EquipmentDTO(inventory.getEquipment()));
+        }
+        return edtos;
     }
 
     //Needs negative testing
