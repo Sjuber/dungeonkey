@@ -12,8 +12,11 @@ import facades.CharacterFacade;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import dtos.PlayerDTO;
+import dtos.SkillsDTO;
 import entities.AbillityScores;
 import entities.Character;
+import entities.Skills;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
@@ -43,7 +46,14 @@ public class CharacterResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getASByCharacter(@PathParam("characterid") String characterID) {
-        AbillityScoresDTO asdto = facade.getASByCharacter(Integer.valueOf(characterID));
+        AbillityScoresDTO asdto;
+        ExceptionDTO eDTO;
+        try {
+            asdto = facade.getASByCharacter(Integer.valueOf(characterID));
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(asdto);
     }
 
@@ -53,7 +63,14 @@ public class CharacterResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public String createCharacter(@PathParam("playerid") String playerid, String json) {
         CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
-        CharacterDTO chaDTOPersisted = facade.createCharacter(chaDTO, playerid);
+        CharacterDTO chaDTOPersisted;
+        ExceptionDTO eDTO;
+        try {
+            chaDTOPersisted = facade.createCharacter(chaDTO, playerid);
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(chaDTOPersisted);
     }
 
@@ -61,9 +78,17 @@ public class CharacterResource {
     @Path("updatecharacter/{characterID}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateCharacter(@PathParam("characterID") int characterID, String json) throws Exception {
+    public String updateCharacter(@PathParam("characterID") int characterID, String json) {
         CharacterDTO chaDTO = GSON.fromJson(json, CharacterDTO.class);
-        CharacterDTO chaDTOUpdated = facade.updateCharacter(chaDTO, characterID);
+        CharacterDTO chaDTOUpdated;
+        ExceptionDTO eDTO;
+        try {
+            //Make it players.getRole() depended
+            chaDTOUpdated = facade.updateCharacterByDM(chaDTO, characterID);
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(chaDTOUpdated);
     }
 
@@ -73,24 +98,46 @@ public class CharacterResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public String updateASSetByCharacter(@PathParam("characterid") String characterID, String abillitySet) {
         AbillityScoresDTO aSDTO = new AbillityScoresDTO(GSON.fromJson(abillitySet, AbillityScores.class));
-        CharacterDTO cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
+        CharacterDTO cdtoUpdated;
+        ExceptionDTO eDTO;
+        try {
+            cdtoUpdated = facade.updateAbillityScores(aSDTO, Integer.valueOf(characterID));
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(cdtoUpdated);
     }
+
     @Path("updatehp/{characterid}/{newhpvalue}")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateHP(@PathParam("characterid") String characterID, @PathParam("newhpvalue") String newHPValue){
-        String hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
+    public String updateHP(@PathParam("characterid") String characterID, @PathParam("newhpvalue") String newHPValue) {
+        String hPValue;
+        ExceptionDTO eDTO;
+        try {
+            hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(hPValue);
     }
-    
-        @Path("updatebio/{characterid}")
+
+    @Path("updatebio/{characterid}")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateBiography(@PathParam("characterid") int charc, String bio) throws Exception{
-        String bios = facade.updateBiography(bio, charc);
+    public String updateBiography(@PathParam("characterid") int charc, String bio) {
+        String bios;
+        ExceptionDTO eDTO;
+        try {
+            bios = facade.updateBiography(bio, charc);
+        } catch (Exception ex) {
+            eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }
         return GSON.toJson(bios);
     }
 
@@ -115,16 +162,23 @@ public class CharacterResource {
             return GSON.toJson(cdtoUpdated);
         } catch (Exception ex) {
             exceptionDTO = new ExceptionDTO(404, ex.getMessage());
+            return exceptionDTO.toString();
         }
-        return exceptionDTO.getMessage();
     }
 
-    @Path("inventory/{equipmentname}")
+    @Path("{characterid}/inventory/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipment(@PathParam("equipmentname") String equipmentName) throws Exception {
-        EquipmentDTO equipmentDTO = facade.getEquipment(equipmentName);
-        return GSON.toJson(equipmentDTO);
+    public String getEquipment(@PathParam("characterid") int characterID, @PathParam("equipmentname") String equipmentName) {
+        List<EquipmentDTO> equipmentDTOs = new ArrayList<>();
+        ExceptionDTO exceptionDTO;
+        try {
+            equipmentDTOs = facade.getEquipmentsForCharacter(characterID);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
+        return GSON.toJson(equipmentDTOs);
     }
 
     @Path("searchbyname/{name}")
@@ -141,6 +195,38 @@ public class CharacterResource {
     public String searchByPlayer(@PathParam("player") String player) {
         List<CharacterDTO> chDTO = facade.searchByPlayer(player);
         return GSON.toJson(chDTO);
+    }
+
+    @Path("{characterid}/skills")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getSkillsForCharacter(@PathParam("characterid") int characterid) {
+        SkillsDTO skillsDTO;
+        ExceptionDTO exceptionDTO;
+        try {
+            skillsDTO = facade.getSkillsFromACharacter(characterid);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
+        return GSON.toJson(skillsDTO);
+    }
+    
+    @Path("{characterid}/skills")
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    public String updateSkillsForCharacter(@PathParam("characterid") int characterid, String skillsDTOjson) {
+        SkillsDTO skillsDTO;
+        SkillsDTO skillsDTOToBecome;
+        ExceptionDTO exceptionDTO;
+        try {
+            skillsDTOToBecome = new SkillsDTO(GSON.fromJson(skillsDTOjson, Skills.class));
+            skillsDTO = facade.updateSkillsForCharacter(characterid, skillsDTOToBecome);
+        } catch (Exception e) {
+            exceptionDTO = new ExceptionDTO(404, e.getMessage());
+            return exceptionDTO.toString();
+        }
+        return GSON.toJson(skillsDTO);
     }
     
 }

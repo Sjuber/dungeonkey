@@ -18,6 +18,10 @@ public class EquipmentCatagoryDTO {
         return name;
     }
 
+    public String getIndex() {
+        return index;
+    }
+
     
     
 }

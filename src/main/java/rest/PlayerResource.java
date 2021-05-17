@@ -7,8 +7,11 @@ import dtos.CharacterDTO;
 import dtos.PlayerDTO;
 import entities.AbillityScores;
 import entities.Character;
+import errorhandling.ExceptionDTO;
 import facades.CharacterFacade;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -32,14 +35,19 @@ public class PlayerResource {
 //    public String greetings() {
 //        return "Hello \n Welcome to DungeonKey API \n - for players :D ";
 //    }
-
     @POST
     @Path("createplayer")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public String createPlayer(String json) {
         PlayerDTO pDTO = GSON.fromJson(json, PlayerDTO.class);
-        PlayerDTO pDTOPersisted = facade.createPlayer(pDTO.getUsername(), pDTO.getPassword());
+        PlayerDTO pDTOPersisted;
+        try {
+            pDTOPersisted = facade.createPlayer(pDTO.getUsername(), pDTO.getPassword());
+        } catch (Exception ex) {
+            ExceptionDTO edto = new ExceptionDTO(404, ex.getMessage());
+            return edto.toString();
+        }
         return GSON.toJson(pDTOPersisted);
     }
 
@@ -47,24 +55,42 @@ public class PlayerResource {
     @Path("updatepassword/{playerid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updatePassword(@PathParam("playerid") String playerId, String json) throws Exception {
+    public String updatePassword(@PathParam("playerid") String playerId, String json) {
         PlayerDTO pDTO = GSON.fromJson(json, PlayerDTO.class);
-        PlayerDTO pDTOToBeUpdated= facade.updatePlayer(pDTO, pDTO.getUsername());
+        PlayerDTO pDTOToBeUpdated;
+        try {
+            pDTOToBeUpdated = facade.updatePlayer(pDTO, pDTO.getUsername());
+        } catch (Exception ex) {
+            ExceptionDTO edto = new ExceptionDTO(400, ex.getMessage());
+            return edto.toString();
+        }
         return GSON.toJson(pDTOToBeUpdated);
     }
-    
+
     @GET
     @Path("{playerid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getPlayer(@PathParam("playerid") String playerName) throws Exception {
-        PlayerDTO playerDTO = facade.getPlayerByName(playerName);
+    public String getPlayer(@PathParam("playerid") String playerName) {
+        PlayerDTO playerDTO;
+        try {
+            playerDTO = facade.getPlayerByName(playerName);
+        } catch (Exception ex) {
+            ExceptionDTO edto = new ExceptionDTO(400, ex.getMessage());
+            return edto.toString();
+        }
         return GSON.toJson(playerDTO);
     }
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getPlayers() {
-        List<PlayerDTO> playerDTO = facade.getPlayers();
+        List<PlayerDTO> playerDTO;
+        try {
+            playerDTO = facade.getPlayers();
+        } catch (Exception ex) {
+            ExceptionDTO edto = new ExceptionDTO(400, ex.getMessage());
+            return edto.toString();
+        }
         return GSON.toJson(playerDTO);
     }
 
