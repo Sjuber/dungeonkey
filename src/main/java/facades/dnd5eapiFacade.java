@@ -7,6 +7,7 @@ import dtos.EquipmentCatagoryDTO;
 import dtos.EquipmentDTO;
 import entities.Equipment;
 import entities.EquipmentCategory;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +33,21 @@ public class dnd5eapiFacade {
         if (equipmentName == null) {
             throw new Exception("You must send a given equipment name for fetching");
         } else {
-        JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/" + equipmentName);
-        String jsonObjectCat = jSONObject.get("equipment_category").toString();
-        EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(jsonObjectCat, EquipmentCategory.class));
-        Object weight;
-        try {
-             weight = jSONObject.get("weight");
-        } catch (Exception e) {
-            return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), 0.0, equipmentCatagoryDTO.getName()));
-        }
-        return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), Double.parseDouble(weight.toString()), equipmentCatagoryDTO.getName()));
+            try {
+                JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/" + equipmentName);
+                String jsonObjectCat = jSONObject.get("equipment_category").toString();
+                EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(jsonObjectCat, EquipmentCategory.class));
+                Object weight;
+                try {
+                    weight = jSONObject.get("weight");
+                } catch (Exception e) {
+                    return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), 0.0, equipmentCatagoryDTO.getName()));
+                }
+                return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), Double.parseDouble(weight.toString()), equipmentCatagoryDTO.getName()));
+
+            } catch (FileNotFoundException e) {
+                throw new Exception("There is no such equipment");
+            }
         }
     }
 
@@ -51,7 +57,7 @@ public class dnd5eapiFacade {
         ObjectMapper objectMapper = new ObjectMapper();
         EquipmentCategory[] ec = objectMapper.readValue(jSONObject.get("results").toString(), EquipmentCategory[].class);
         List<EquipmentCatagoryDTO> ecs = new ArrayList<>();
-        
+
         for (int i = 0; i < ec.length; i++) {
             ecs.add(new EquipmentCatagoryDTO(ec[i]));
         }
@@ -60,7 +66,7 @@ public class dnd5eapiFacade {
                 eDTOs.add(getEquipmentDTOFromAPI(ec1.getIndex(), jsonReader));
             } catch (Exception e) {
                 //For test
-                System.out.println("Den her har fejl: "+ ec1.getName() + "\n");
+                System.out.println("Den her har fejl: " + ec1.getName() + "\n");
                 continue;
             }
         }
