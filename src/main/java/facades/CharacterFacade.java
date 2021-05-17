@@ -284,19 +284,17 @@ public class CharacterFacade {
         return new CharacterDTO(character);
     }
 
-
-  
     public List<CharacterDTO> searchByName(String characterName) throws Exception {
 
         EntityManager em = emf.createEntityManager();
         TypedQuery<Character> character = em.createQuery("SELECT c FROM Character c WHERE c.name = :name", Character.class
         );
         character.setParameter("name", characterName);
-        
+
         List<Character> resultlist = character.getResultList();
-        
+
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
-        if(resultlist.isEmpty()){
+        if (resultlist.isEmpty()) {
             throw new Exception("No characters with that name were found");
         }
 
@@ -310,7 +308,7 @@ public class CharacterFacade {
         character.setParameter("race", characterRace);
         List<Character> resultlist = character.getResultList();
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
-        if(resultlist.isEmpty()){
+        if (resultlist.isEmpty()) {
             throw new Exception("No characters with that race were found");
         }
 
@@ -332,7 +330,7 @@ public class CharacterFacade {
         );
         query.setParameter("playername", playerName);
         List<Character> resultlist = query.getResultList();
-        if(resultlist.isEmpty()){
+        if (resultlist.isEmpty()) {
             throw new Exception("No players with that name were found");
         }
         List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
@@ -392,33 +390,34 @@ public class CharacterFacade {
         if (username == null || password == null) {
             throw new Exception("You must send a given username and password to be verified");
         } else {
-        try {
-            player = em.find(Player.class, username);
-            if (player == null || !player.verifyPassword(password)) {
-                throw new AuthenticationException("Invalid user name or password");
+            try {
+                player = em.find(Player.class, username);
+                if (player == null || !player.verifyPassword(password)) {
+                    throw new AuthenticationException("Invalid user name or password");
+                }
+            } finally {
+                em.close();
             }
-        } finally {
-            em.close();
-        }
         }
         return player;
     }
 
-        public PlayerDTO getPlayerByName(String playerName) throws Exception {
+    public PlayerDTO getPlayerByName(String playerName) throws Exception {
 
         EntityManager em = emf.createEntityManager();
         if (playerName == null) {
             throw new Exception("You must send a given username to get a player");
         } else {
-        TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
-        );
-        playerQuery.setParameter("name", playerName);
-        Player player = playerQuery.getSingleResult();
-        if(player == null){
-            throw new Exception("No characters with that name were found");
+            TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
+            );
+            playerQuery.setParameter("name", playerName);
+            Player player = playerQuery.getSingleResult();
+            if (player == null) {
+                throw new Exception("No characters with that name were found");
+            }
+
+            return new PlayerDTO(player);
         }
-        
-        return new PlayerDTO(player);
     }
 
     public List<PlayerDTO> getPlayers() throws Exception {
