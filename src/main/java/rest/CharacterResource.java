@@ -166,10 +166,10 @@ public class CharacterResource {
         }
     }
 
-    @Path("{characterid}/inventory/{equipmentname}")
+    @Path("{characterid}/inventory")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipment(@PathParam("characterid") int characterID, @PathParam("equipmentname") String equipmentName) {
+    public String getEquipment(@PathParam("characterid") int characterID) {
         List<EquipmentDTO> equipmentDTOs = new ArrayList<>();
         ExceptionDTO exceptionDTO;
         try {
