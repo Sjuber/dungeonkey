@@ -101,7 +101,7 @@ public class CharacterFacadeIT {
     }
 
     @Test
-    public void testUpdateAbillityScores() {
+    public void testUpdateAbillityScores() throws Exception {
         System.out.println("updateAbillityScores");
         AbillityScores aS = new AbillityScores(11, 11, 11, 11, 11, 11);
         AbillityScoresDTO aSDTONew = new AbillityScoresDTO(aS);
@@ -120,7 +120,7 @@ public class CharacterFacadeIT {
     }
 
     @Test
-    public void testGetASByCharacter() {
+    public void testGetASByCharacter() throws Exception {
         System.out.println("getASByCharacter");
         EntityManager em = emf.createEntityManager();
         String name = "Damascus";
