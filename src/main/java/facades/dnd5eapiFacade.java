@@ -28,7 +28,10 @@ public class dnd5eapiFacade {
         return instance;
     }
 
-    public EquipmentDTO getEquipmentDTOFromAPI(String equipmentName, JsonReader jsonReader) throws IOException {
+    public EquipmentDTO getEquipmentDTOFromAPI(String equipmentName, JsonReader jsonReader) throws IOException, Exception {
+        if (equipmentName == null) {
+            throw new Exception("You must send a given equipment name for fetching");
+        } else {
         JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/" + equipmentName);
         String jsonObjectCat = jSONObject.get("equipment_category").toString();
         EquipmentCatagoryDTO equipmentCatagoryDTO = new EquipmentCatagoryDTO(GSON.fromJson(jsonObjectCat, EquipmentCategory.class));
@@ -39,14 +42,16 @@ public class dnd5eapiFacade {
             return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), 0.0, equipmentCatagoryDTO.getName()));
         }
         return new EquipmentDTO(new Equipment("" + jSONObject.get("index"), Double.parseDouble(weight.toString()), equipmentCatagoryDTO.getName()));
+        }
     }
 
     public List<EquipmentDTO> getEquipmentDTOsFromAPI(JsonReader jsonReader) throws IOException {
+        List<EquipmentDTO> eDTOs = new ArrayList<>();
         JSONObject jSONObject = jsonReader.readJsonFromUrl("https://www.dnd5eapi.co/api/equipment/");
         ObjectMapper objectMapper = new ObjectMapper();
         EquipmentCategory[] ec = objectMapper.readValue(jSONObject.get("results").toString(), EquipmentCategory[].class);
         List<EquipmentCatagoryDTO> ecs = new ArrayList<>();
-        List<EquipmentDTO> eDTOs = new ArrayList<>();
+        
         for (int i = 0; i < ec.length; i++) {
             ecs.add(new EquipmentCatagoryDTO(ec[i]));
         }

@@ -36,7 +36,7 @@ public class CharacterFacade {
     public CharacterDTO updateAbillityScores(AbillityScoresDTO aSDTONew, int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character dbCharacter;
-        if (aSDTONew == null || characterID < 0) {
+        if (aSDTONew == null || characterID <= 0) {
             throw new Exception("You must send a given abilityscore to change to and the characters ID must be 1 or higher");
         } else {
             try {
@@ -65,31 +65,41 @@ public class CharacterFacade {
         return new CharacterDTO(dbCharacter);
     }
 
-    public PlayerDTO createPlayer(String usnm, String pswd) {
-        EntityManager em = emf.createEntityManager();
+    public PlayerDTO createPlayer(String usnm, String pswd) throws Exception {
         Player pl = new Player(usnm, pswd);
-        em.getTransaction().begin();
-        em.persist(pl);
-        em.getTransaction().commit();
-        PlayerDTO plDTO = new PlayerDTO(pl);
+        PlayerDTO plDTO;
+        if (usnm == null) {
+            throw new Exception("You must send a given username for a player to create character");
+        } else {
+            EntityManager em = emf.createEntityManager();
+
+            em.getTransaction().begin();
+            em.persist(pl);
+            em.getTransaction().commit();
+            plDTO = new PlayerDTO(pl);
+        }
         return plDTO;
     }
 
     public PlayerDTO updatePlayer(PlayerDTO pdtoNeo, String pId) throws Exception {
         EntityManager em = emf.createEntityManager();
         Player dbPlayer;
-        try {
-            em.getTransaction().begin();
-            dbPlayer = em.find(Player.class, pId);
-            if (dbPlayer == null) {
-                throw new Exception("The player is not in the database");
-            }
-            dbPlayer.setPassword(pdtoNeo.getPassword());
+        if (pdtoNeo == null || pId == null) {
+            throw new Exception("You must send the given username to change and the player to change to");
+        } else {
+            try {
+                em.getTransaction().begin();
+                dbPlayer = em.find(Player.class, pId);
+                if (dbPlayer == null) {
+                    throw new Exception("The player is not in the database");
+                }
+                dbPlayer.setPassword(pdtoNeo.getPassword());
 
-            em.merge(dbPlayer);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
+                em.merge(dbPlayer);
+                em.getTransaction().commit();
+            } finally {
+                em.close();
+            }
         }
         return new PlayerDTO(dbPlayer);
     }
@@ -135,7 +145,7 @@ public class CharacterFacade {
     public CharacterDTO updateCharacterByDM(CharacterDTO chaDTONeo, int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character asFromDB = null;
-        if (chaDTONeo == null || characterID < 0) {
+        if (chaDTONeo == null || characterID <= 0) {
             throw new Exception("You must send a given character to change to and the old characters ID must be 1 or higher");
         } else {
             try {
@@ -221,8 +231,8 @@ public class CharacterFacade {
         Inventory inventory;
         List<Inventory> inventories;
         int qtyTotal;
-        if (edto == null) {
-            throw new Exception("The given equipment title must not be empty");
+        if (edto == null || characterID <= 0) {
+            throw new Exception("The given equipment title must not be empty and the character ID should be 1 or higher");
         } else {
             try {
                 em.getTransaction().begin();
@@ -318,15 +328,19 @@ public class CharacterFacade {
     public EquipmentDTO getEquipment(String equipmentName) throws Exception {
         EntityManager em = emf.createEntityManager();
         Equipment equipment = null;
-        try {
-            em.getTransaction().begin();
-            equipment = em.find(Equipment.class,
-                    equipmentName);
-        } finally {
-            em.close();
-        }
-        if (equipment == null) {
-            throw new Exception("There is no such equipment with the given name");
+        if (equipmentName == null) {
+            throw new Exception("You must send a given name of equitpment to change to");
+        } else {
+            try {
+                em.getTransaction().begin();
+                equipment = em.find(Equipment.class,
+                        equipmentName);
+            } finally {
+                em.close();
+            }
+            if (equipment == null) {
+                throw new Exception("There is no such equipment with the given name");
+            }
         }
         return new EquipmentDTO(equipment);
     }
@@ -358,9 +372,12 @@ public class CharacterFacade {
 
     }
 
-    public Player getVeryfiedUser(String username, String password) throws AuthenticationException {
+    public Player getVeryfiedUser(String username, String password) throws AuthenticationException, Exception {
         EntityManager em = emf.createEntityManager();
         Player player;
+        if (username == null || password == null) {
+            throw new Exception("You must send a given username and password to be verified");
+        } else {
         try {
             player = em.find(Player.class, username);
             if (player == null || !player.verifyPassword(password)) {
@@ -369,23 +386,31 @@ public class CharacterFacade {
         } finally {
             em.close();
         }
+        }
         return player;
     }
 
-    public PlayerDTO getPlayerByName(String playerName) {
+    public PlayerDTO getPlayerByName(String playerName) throws Exception {
         EntityManager em = emf.createEntityManager();
+        Player player;
+        if (playerName == null) {
+            throw new Exception("You must send a given username to get a player");
+        } else {
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p WHERE p.userName =:name", Player.class
         );
         playerQuery.setParameter("name", playerName);
-        Player player = playerQuery.getSingleResult();
-
+        player = playerQuery.getSingleResult();
+        }
         return new PlayerDTO(player);
     }
 
-    public List<PlayerDTO> getPlayers() {
+    public List<PlayerDTO> getPlayers() throws Exception {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Player> playerQuery = em.createQuery("SELECT p FROM Player p", Player.class);
         List<Player> players = playerQuery.getResultList();
+        if (players.isEmpty()) {
+            throw new Exception("There was no player in the database");
+        }
         List<PlayerDTO> playerDTOs = PlayerDTO.getDtos(players);
         return playerDTOs;
     }
@@ -411,7 +436,7 @@ public class CharacterFacade {
         Character character = null;
         Character characterNew = null;
         if (characterID <= 0) {
-            throw new Exception("ID for character should be 1 or more");
+            throw new Exception("ID for character should be 1 or higher");
         } else {
 
             //em.getTransaction().begin();
@@ -437,6 +462,5 @@ public class CharacterFacade {
             return new SkillsDTO(characterNew.getSkills());
         }
     }
-    
-    
+
 }

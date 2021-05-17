@@ -35,12 +35,12 @@ public class dnd5eapiRessource {
     @Produces(MediaType.APPLICATION_JSON)
     public String getEquipment(@PathParam("equipmentname") String equipmentname) {
         EquipmentDTO edto;
-        try {
-            edto = facade.getEquipmentDTOFromAPI(equipmentname, jsonReader);
-        } catch (IOException ex) {
-            ExceptionDTO exdto = new ExceptionDTO(400, ex.getMessage());
-            return exdto.toString();
-        }
+            try {
+                edto = facade.getEquipmentDTOFromAPI(equipmentname, jsonReader);
+            } catch (Exception ex) {
+                ExceptionDTO edto1 = new ExceptionDTO(404, ex.getMessage());
+                return ex.toString();
+            }
         return GSON.toJson(edto);
     }
     
