@@ -1,4 +1,3 @@
-
 package rest;
 
 import com.google.gson.Gson;
@@ -24,30 +23,30 @@ import utils.JsonReader;
 
 @Path("dnd5eapifetch")
 public class dnd5eapiRessource {
-    
+
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final dnd5eapiFacade facade = dnd5eapiFacade.getdnd5api(EMF);
     private static final JsonReader jsonReader = new JsonReader();
-    
+
     @Path("equipments/{equipmentname}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getEquipment(@PathParam("equipmentname") String equipmentname) {
         EquipmentDTO edto;
-            try {
-                edto = facade.getEquipmentDTOFromAPI(equipmentname, jsonReader);
-            } catch (Exception ex ) {
-                ExceptionDTO edto1 = new ExceptionDTO(404, ex.getMessage());
-                return ex.toString();
-            }
+        try {
+            edto = facade.getEquipmentDTOFromAPI(equipmentname, jsonReader);
+        } catch (Exception ex) {
+            ExceptionDTO edto1 = new ExceptionDTO(404, ex.getMessage());
+            return ex.toString();
+        }
         return GSON.toJson(edto);
     }
-    
+
     @Path("equipments")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getEquipments()  {
+    public String getEquipments() {
         List<EquipmentDTO> edtos;
         try {
             edtos = facade.getEquipmentDTOsFromAPI(jsonReader);
@@ -57,5 +56,5 @@ public class dnd5eapiRessource {
         }
         return GSON.toJson(edtos);
     }
-    
+
 }
