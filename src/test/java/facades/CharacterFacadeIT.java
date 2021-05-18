@@ -150,7 +150,7 @@ public class CharacterFacadeIT {
     }
 
     @Test
-    public void testSearchByName() {
+    public void testSearchByName() throws Exception {
         System.out.println("searchByName");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         Player player1 = new Player("Nikolaj", "Hamster16");
@@ -166,7 +166,7 @@ public class CharacterFacadeIT {
     }
 
     @Test
-    public void testSearchByRace() {
+    public void testSearchByRace() throws Exception {
         System.out.println("searchByRace");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         Player player1 = new Player("Nikolaj", "Hamster16");
@@ -182,7 +182,7 @@ public class CharacterFacadeIT {
     }
 
     @Test
-    public void testSearchByPlayer() {
+    public void testSearchByPlayer() throws Exception {
         System.out.println("searchByPlayer");
         AbillityScores abiSco1 = new AbillityScores(18, 8, 14, 12, 14, 10);
         Player player1 = new Player("Nikolaj", "Hamster16");
