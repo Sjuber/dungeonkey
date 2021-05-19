@@ -54,6 +54,7 @@ public class CharacterFacade {
                     aSFromDB.setIntelligence(aSDTONew.getIntelligence());
                     aSFromDB.setWisdom(aSDTONew.getWisdom());
                     aSFromDB.setCharacter(dbCharacter);
+                    em.persist(aSFromDB);
                     em.merge(dbCharacter);
                     em.getTransaction().commit();
                 }
@@ -81,10 +82,10 @@ public class CharacterFacade {
         return plDTO;
     }
 
-    public PlayerDTO updatePlayer(PlayerDTO pdtoNeo, String pId) throws Exception {
+    public PlayerDTO updatePlayer(String newPlayerPassword, String pId) throws Exception {
         EntityManager em = emf.createEntityManager();
         Player dbPlayer;
-        if (pdtoNeo == null || pId == null) {
+        if (newPlayerPassword == null || pId == null) {
             throw new Exception("You must send the given username to change and the player to change to");
         } else {
             try {
@@ -93,7 +94,7 @@ public class CharacterFacade {
                 if (dbPlayer == null) {
                     throw new Exception("The player is not in the database");
                 }
-                dbPlayer.setPassword(pdtoNeo.getPassword());
+                dbPlayer.setPassword(newPlayerPassword);
 
                 em.merge(dbPlayer);
                 em.getTransaction().commit();
@@ -226,6 +227,7 @@ public class CharacterFacade {
         EntityManager em = emf.createEntityManager();
         EntityManager emPersist = emf.createEntityManager();
         Character character = null;
+        Character characterNew = null;
         Equipment equipment = null;
         Equipment equipmentNew;
         Inventory inventory;
@@ -271,17 +273,19 @@ public class CharacterFacade {
                         inventory.setCharacter(character);
                         em.merge(character);
                     }
+                    em.getTransaction().commit();
                 }
+
                 if (equipment != null && equipment.getInventories().isEmpty()) {
                     em.remove(equipment);
                 }
-                character = em.find(Character.class, characterID);
-                em.getTransaction().commit();
+                characterNew = em.find(Character.class, characterID);
+
             } finally {
                 em.close();
             }
         }
-        return new CharacterDTO(character);
+        return new CharacterDTO(characterNew);
     }
 
     public List<CharacterDTO> searchByName(String characterName) throws Exception {
@@ -326,27 +330,31 @@ public class CharacterFacade {
 //    }
     public List<CharacterDTO> searchByPlayer(String playerName) throws Exception {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class
-        );
-        query.setParameter("playername", playerName);
-        List<Character> resultlist = query.getResultList();
-        if (resultlist.isEmpty()) {
+        List<CharacterDTO> resultAsDTO = null;
+        Player p = em.find(Player.class, playerName);
+        if (p == null) {
             throw new Exception("No players with that name were found");
+        } else {
+            TypedQuery<Character> query = em.createQuery("SELECT c FROM Character c JOIN c.player p WHERE p.userName =:playername", Character.class
+            );
+            query.setParameter("playername", playerName);
+            List<Character> resultlist = query.getResultList();
+
+            resultAsDTO = CharacterDTO.getDtos(resultlist);
         }
-        List<CharacterDTO> resultAsDTO = CharacterDTO.getDtos(resultlist);
         return resultAsDTO;
     }
 
-    public List<EquipmentDTO> getEquipmentsForCharacter( int characterID) throws Exception {
+    public List<EquipmentDTO> getEquipmentsForCharacter(int characterID) throws Exception {
         EntityManager em = emf.createEntityManager();
         Character character = null;
         List<EquipmentDTO> edtos = new ArrayList<>();
-        if (characterID<=0) {
+        if (characterID <= 0) {
             throw new Exception("The given character ID should be 1 or higher");
         } else {
             try {
                 em.getTransaction().begin();
-                character = em.find(Character.class,characterID);
+                character = em.find(Character.class, characterID);
             } finally {
                 em.close();
             }
@@ -355,24 +363,27 @@ public class CharacterFacade {
             }
         }
         for (Inventory inventory : character.getInventories()) {
-           edtos.add(new EquipmentDTO(inventory.getEquipment()));
+            edtos.add(new EquipmentDTO(inventory.getEquipment()));
         }
         return edtos;
     }
 
     //Needs negative testing
-    public String updateHP(int newHPValue, int CharacterId) throws Exception {
+    public String updateHP(int newHPValue, int CharacterId) throws NullPointerException, IllegalArgumentException {
         EntityManager em = emf.createEntityManager();
         Character characterWithNewHp;
         Character character = null;
+        character = em.find(Character.class, CharacterId);
         if (!(CharacterId > 0)) {
-            throw new Exception("Character ID can not be 0 or less - and it should be a number");
+            throw new NullPointerException("Character ID can not be 0 or less - and it should be a number");
+        } else if (character.getMaxHP() < newHPValue) {
+            throw new IllegalArgumentException("Characters new HP value must be lower than the Max HP");
         } else {
             try {
                 em.getTransaction().begin();
-                character = em.find(Character.class, CharacterId);
+
                 if (character == null) {
-                    throw new Exception("Could not find a character with the given ID number");
+                    throw new NullPointerException("Could not find a character with the given ID number");
                 }
                 character.setCurrentHP(newHPValue);
                 em.merge(character);

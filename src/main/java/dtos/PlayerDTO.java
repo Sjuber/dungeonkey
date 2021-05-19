@@ -9,11 +9,11 @@ import java.util.List;
 public class PlayerDTO {
 
     private String username;
-    private String password;
+    //private String password;
     
     public PlayerDTO(Player player) {
         username = player.getUserName();
-        password = player.getPassword();
+        //password = player.getPassword();
     }
 
     public PlayerDTO() {
@@ -23,17 +23,17 @@ public class PlayerDTO {
         return username;
     }
 
-    public String getPassword() {
+    /*public String getPassword() {
         return password;
-    }
+    }*/
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public void setPassword(String password) {
+   /* public void setPassword(String password) {
         this.password = password;
-    }
+    }*/
 
     public static List<PlayerDTO> getDtos(List<Player> players) {
         List<PlayerDTO> cdtos = new ArrayList();
