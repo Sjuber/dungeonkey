@@ -118,8 +118,11 @@ public class CharacterResource {
         ExceptionDTO eDTO;
         try {
             hPValue = facade.updateHP(Integer.valueOf(newHPValue), Integer.valueOf(characterID));
-        } catch (Exception ex) {
+        } catch (NullPointerException ex) {
             eDTO = new ExceptionDTO(404, ex.getMessage());
+            return eDTO.toString();
+        }catch(IllegalArgumentException e){
+            eDTO = new ExceptionDTO(413, e.getMessage());
             return eDTO.toString();
         }
         return GSON.toJson(hPValue);

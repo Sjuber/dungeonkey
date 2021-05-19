@@ -29,7 +29,7 @@ public class dnd5eapiRessource {
     private static final dnd5eapiFacade facade = dnd5eapiFacade.getdnd5api(EMF);
     private static final JsonReader jsonReader = new JsonReader();
 
-    @Path("equipments/{equipmentname}")
+    @Path("equipments/{equipmentname}")//x
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getEquipment(@PathParam("equipmentname") String equipmentname) {
@@ -43,7 +43,7 @@ public class dnd5eapiRessource {
         return GSON.toJson(edto);
     }
 
-    @Path("equipments")
+    @Path("equipments")// x - den skal optimeres så den ikke kører så langsomt
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getEquipments() {
