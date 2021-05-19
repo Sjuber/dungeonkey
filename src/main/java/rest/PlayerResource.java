@@ -41,10 +41,10 @@ public class PlayerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public String createPlayer(@PathParam("username")String username, String password) {
         //PlayerDTO pDTO = GSON.fromJson(json, PlayerDTO.class);
-        String newpassword = GSON.fromJson(password, String.class);
+        //String newpassword = GSON.fromJson(password, String.class);
         PlayerDTO pDTOPersisted;
         try {
-            pDTOPersisted = facade.createPlayer(username, newpassword);
+            pDTOPersisted = facade.createPlayer(username, password);
         } catch (Exception ex) {
             ExceptionDTO edto = new ExceptionDTO(404, ex.getMessage());
             return edto.toString();
@@ -52,11 +52,11 @@ public class PlayerResource {
         return GSON.toJson(pDTOPersisted);
     }
 
-    @PUT
-    @Path("updatepassword")
+   @PUT
+    @Path("updatepassword/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updatePassword(String playerId, String newPassword) {
+    public String updatePassword(@PathParam("username")String playerId, String newPassword) {
         //PlayerDTO pDTO = GSON.fromJson(json, PlayerDTO.class);
         PlayerDTO pDTOToBeUpdated;
         try {
@@ -68,7 +68,7 @@ public class PlayerResource {
         return GSON.toJson(pDTOToBeUpdated);
     }
 
-    @GET
+     @GET
     @Path("{playerid}")//x - men passwords er stadigvæk vist
     @Produces(MediaType.APPLICATION_JSON)
     public String getPlayer(@PathParam("playerid") String playerName) {
