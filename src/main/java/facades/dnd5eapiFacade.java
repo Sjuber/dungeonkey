@@ -90,13 +90,21 @@ public class dnd5eapiFacade {
 
     public void fillingUpDBWithEquipments(List<EquipmentDTO> equipmentDTOs) throws Exception {
         EntityManager em = emf.createEntityManager();
+        EntityManager emDelete = emf.createEntityManager();
         Equipment equipment;
         try {
             em.getTransaction().begin();
-            TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
+            TypedQuery<Equipment> eQuery = em.createQuery("SELECT e FROM Equipment e", Equipment.class);
             List<Equipment> equipments = eQuery.getResultList();
-            for (Equipment equipmentTmp : equipments) {
-                em.remove(equipmentTmp);
+            if (!(equipments.isEmpty())) {
+                try {
+                    emDelete.getTransaction().begin();
+                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e", Equipment.class);
+                    eDeleteQuery.executeUpdate();
+                    emDelete.getTransaction().commit();
+                } finally {
+                    emDelete.close();
+                }
             }
             for (EquipmentDTO e : equipmentDTOs) {
                 equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
