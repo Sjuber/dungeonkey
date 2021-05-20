@@ -95,8 +95,10 @@ public class dnd5eapiFacade {
             em.getTransaction().begin();
             TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
             List<Equipment> equipments = eQuery.getResultList();
-            for (Equipment equipmentTmp : equipments) {
+            if (!(equipments.isEmpty())) {
+               for (Equipment equipmentTmp : equipments) {
                 em.remove(equipmentTmp);
+            } 
             }
             for (EquipmentDTO e : equipmentDTOs) {
                 equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
