@@ -98,16 +98,20 @@ public class dnd5eapiFacade {
             em.getTransaction().begin();
             TypedQuery<Equipment> eQuery = em.createQuery("SELECT e FROM Equipment e", Equipment.class);
             List<Equipment> equipments = eQuery.getResultList();
-            if (!(equipments.isEmpty())) {
-                try {
-                    emDelete.getTransaction().begin();
-                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e WHERE e.inventories =:inventoryempty", Equipment.class);
-                    eDeleteQuery.setParameter("inventoryempty", inventorys);
-                    emDelete.getTransaction().commit();
-                } finally {
-                    emDelete.close();
-                }
-            }
+//            if (!(equipments.isEmpty())) {
+//                try {
+//                    emDelete.getTransaction().begin();
+//                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("SELECT e FROM Equipment e JOIN e.inventories i WHERE i.equipment IS NOT NULL", Equipment.class);
+//                    List<Equipment> es = eDeleteQuery.getResultList();
+//                    for (Equipment e : es) {
+//                        emDelete.remove(e.getInventories());
+//                        emDelete.remove(e);
+//                    }
+//                    emDelete.getTransaction().commit();
+//                } finally {
+//                    emDelete.close();
+//                }
+//            }
             for (EquipmentDTO e : equipmentDTOs) {
                 equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
                 em.persist(equipment);
