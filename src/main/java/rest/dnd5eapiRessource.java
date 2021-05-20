@@ -44,6 +44,7 @@ public class dnd5eapiRessource {
         return GSON.toJson(edto);
     }
 
+    //PERSIST ALL EQUIPMENTS
     @Path("equipments/persist")
     @POST
     @Produces(MediaType.APPLICATION_JSON)

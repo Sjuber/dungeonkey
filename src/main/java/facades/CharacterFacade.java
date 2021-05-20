@@ -15,6 +15,7 @@ import entities.Player;
 import entities.Skills;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.glassfish.jersey.server.wadl.internal.generators.resourcedoc.xhtml.Elements;
 import security.errorhandling.AuthenticationException;
@@ -228,8 +229,8 @@ public class CharacterFacade {
         EntityManager emPersist = emf.createEntityManager();
         Character character = null;
         Character characterNew = null;
-        Equipment equipment = null;
-        Equipment equipmentNew;
+        Equipment equipment = new Equipment(edto.getName(), edto.getWeight(), edto.getCatergory());
+        Equipment equipmentNew = equipment;
         Inventory inventory;
         List<Inventory> inventories;
         int qtyTotal;
@@ -238,12 +239,12 @@ public class CharacterFacade {
         } else {
             try {
                 em.getTransaction().begin();
+                character = em.find(Character.class, characterID);
                 equipment = em.find(Equipment.class, edto.getName());
-                if (equipment == null) {
-                    character = em.find(Character.class, characterID);
-                    equipmentNew = new Equipment(edto.getName(), edto.getWeight(), edto.getCatergory());
 
-                    try {
+                if (equipment == null) {
+                    throw new Exception("No such equipment exist in database");
+                    /*try {
                         emPersist.getTransaction().begin();
                         // emPersist.persist(equipmentNew);
                         inventory = new Inventory(equipmentNew, qty);
@@ -254,7 +255,12 @@ public class CharacterFacade {
                     } finally {
                         emPersist.close();
                     }
-
+                } else*/
+                } else if (equipment.getInventories().isEmpty()) {
+                    inventory = new Inventory(equipmentNew, qty);
+                    equipmentNew.addInventory(inventory);
+                    character.addInventory(inventory);
+                    em.merge(character);
                 } else {
                     TypedQuery<Inventory> inventoryQ = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
                     inventoryQ.setParameter("equipmentname", edto.getName());
@@ -264,23 +270,32 @@ public class CharacterFacade {
                     inventory = inventories.get(0);
                     character = inventory.getCharacter();
                     qtyTotal = inventory.getQty() + qty;
+
                     if (qtyTotal <= 0) {
-                        em.remove(inventory);
-                        //inventory.getEquipment().getInventories().remove(inventory);
+                        TypedQuery<Inventory> inventoryQ1 = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
+                        inventoryQ1.setParameter("equipmentname", equipment.getName());
+                        inventoryQ1.setParameter("characterid", characterID);
+                        inventories = inventoryQ.getResultList();
+                        inventory = inventories.get(0);
+                        character.getInventories().remove(inventory);
                         equipment.getInventories().remove(inventory);
+                        em.remove(inventory);
+                        //em.persist(equipmentNew);
                     } else {
+//                        TypedQuery<Inventory> inventoryQ1 = em.createQuery("SELECT i FROM Equipment e JOIN e.inventories i JOIN i.character c WHERE e.name =:equipmentname AND c.id =:characterid", Inventory.class);
+//                        inventoryQ1.setParameter("equipmentname", equipment.getName());
+//                        inventoryQ1.setParameter("characterid", characterID);
+//                        inventories = inventoryQ.getResultList();
+//                        inventory = inventories.get(0);
+                        character.getInventories().remove(inventory);
                         inventory.setQty(qtyTotal);
-                        inventory.setCharacter(character);
-                        em.merge(character);
+                        character.addInventory(inventory);
+
                     }
-                    em.getTransaction().commit();
                 }
-
-                if (equipment != null && equipment.getInventories().isEmpty()) {
-                    em.remove(equipment);
-                }
+                em.merge(character);
                 characterNew = em.find(Character.class, characterID);
-
+                em.getTransaction().commit();
             } finally {
                 em.close();
             }
