@@ -99,7 +99,7 @@ public class dnd5eapiFacade {
             if (!(equipments.isEmpty())) {
                 try {
                     emDelete.getTransaction().begin();
-                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e", Equipment.class);
+                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e WHERE e.inventories IS NULL", Equipment.class);
                     eDeleteQuery.executeUpdate();
                     emDelete.getTransaction().commit();
                 } finally {
