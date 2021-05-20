@@ -11,7 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import org.json.JSONObject;
 import utils.JsonReader;
 
@@ -27,6 +29,19 @@ public class dnd5eapiFacade {
             instance = new dnd5eapiFacade();
         }
         return instance;
+    }
+
+    public EquipmentDTO getEquipment(String equipmentName) throws Exception {
+        EntityManager em = emf.createEntityManager();
+        if (equipmentName == null) {
+            throw new Exception("You must send a given equipment name for fetching");
+        } else {
+            Equipment equipment = em.find(Equipment.class, equipmentName);
+            if (equipment == null) {
+                throw new Exception("There is no such equipment with the given title");
+            }
+            return new EquipmentDTO(equipment);
+        }
     }
 
     public EquipmentDTO getEquipmentDTOFromAPI(String equipmentName, JsonReader jsonReader) throws IOException, Exception {
@@ -71,6 +86,40 @@ public class dnd5eapiFacade {
             }
         }
         return eDTOs;
+    }
+
+    public void fillingUpDBWithEquipments(List<EquipmentDTO> equipmentDTOs) throws Exception {
+        EntityManager em = emf.createEntityManager();
+        Equipment equipment;
+        try {
+            em.getTransaction().begin();
+            TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
+            List<Equipment> equipments = eQuery.getResultList();
+            if (equipments.isEmpty()) {
+                for (EquipmentDTO e : equipmentDTOs) {
+                    equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
+                    em.persist(equipment);
+                }
+                em.getTransaction().commit();
+            }
+            else{
+                throw new Exception("The database already contains equipments");
+            }
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<EquipmentDTO> getAllEquipments() throws Exception{
+        List<EquipmentDTO> edtos = new ArrayList<>();
+       EntityManager em = emf.createEntityManager();
+       TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
+            List<Equipment> equipments = eQuery.getResultList();
+            if (equipments.isEmpty()) {
+                throw new Exception("There is no equipments in the database");
+            }else{
+            equipments.forEach(e -> edtos.add(new EquipmentDTO(e)));
+                    }return edtos;
     }
 
 }
