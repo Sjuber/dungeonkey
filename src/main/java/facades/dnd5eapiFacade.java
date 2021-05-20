@@ -7,6 +7,7 @@ import dtos.EquipmentCatagoryDTO;
 import dtos.EquipmentDTO;
 import entities.Equipment;
 import entities.EquipmentCategory;
+import entities.Inventory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class dnd5eapiFacade {
         EntityManager em = emf.createEntityManager();
         EntityManager emDelete = emf.createEntityManager();
         Equipment equipment;
+        List<Inventory> inventorys = new ArrayList<>();
         try {
             em.getTransaction().begin();
             TypedQuery<Equipment> eQuery = em.createQuery("SELECT e FROM Equipment e", Equipment.class);
@@ -99,8 +101,8 @@ public class dnd5eapiFacade {
             if (!(equipments.isEmpty())) {
                 try {
                     emDelete.getTransaction().begin();
-                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e WHERE e.inventories IS NULL", Equipment.class);
-                    eDeleteQuery.executeUpdate();
+                    TypedQuery<Equipment> eDeleteQuery = emDelete.createQuery("DELETE FROM Equipment e WHERE e.inventories =:inventoryempty", Equipment.class);
+                    eDeleteQuery.setParameter("inventoryempty", inventorys);
                     emDelete.getTransaction().commit();
                 } finally {
                     emDelete.close();
