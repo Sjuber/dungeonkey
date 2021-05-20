@@ -95,31 +95,30 @@ public class dnd5eapiFacade {
             em.getTransaction().begin();
             TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
             List<Equipment> equipments = eQuery.getResultList();
-            if (equipments.isEmpty()) {
-                for (EquipmentDTO e : equipmentDTOs) {
-                    equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
-                    em.persist(equipment);
-                }
-                em.getTransaction().commit();
+            for (Equipment equipmentTmp : equipments) {
+                em.remove(equipmentTmp);
             }
-            else{
-                throw new Exception("The database already contains equipments");
+            for (EquipmentDTO e : equipmentDTOs) {
+                equipment = new Equipment(e.getName(), e.getWeight(), e.getCatergory());
+                em.persist(equipment);
             }
+            em.getTransaction().commit();
         } finally {
             em.close();
         }
     }
-    
-    public List<EquipmentDTO> getAllEquipments() throws Exception{
+
+    public List<EquipmentDTO> getAllEquipments() throws Exception {
         List<EquipmentDTO> edtos = new ArrayList<>();
-       EntityManager em = emf.createEntityManager();
-       TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
-            List<Equipment> equipments = eQuery.getResultList();
-            if (equipments.isEmpty()) {
-                throw new Exception("There is no equipments in the database");
-            }else{
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Equipment> eQuery = em.createQuery("SELECT e From Equipment e", Equipment.class);
+        List<Equipment> equipments = eQuery.getResultList();
+        if (equipments.isEmpty()) {
+            throw new Exception("There is no equipments in the database");
+        } else {
             equipments.forEach(e -> edtos.add(new EquipmentDTO(e)));
-                    }return edtos;
+        }
+        return edtos;
     }
 
 }
