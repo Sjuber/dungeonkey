@@ -35,7 +35,7 @@ public class RenameMeResource {
 //    }
     @Path("populate")
     @GET
-    public String populate() {
+    public String populate() throws Exception {
        utils.Population.populate();
        return "Succes";
     }
