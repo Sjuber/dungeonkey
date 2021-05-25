@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterDTO {
-  
+   private int id;
     private int levl;
     private int maxHP;
     private int currentHP;
@@ -20,8 +20,10 @@ public class CharacterDTO {
     private SkillsDTO skillsDTO;
     private PlayerDTO playerDTO;
     private List<InventoryDTO> inventoryDTO;
+   
 
     public CharacterDTO(Character ch) {
+        this.id = ch.getId();
         this.levl = ch.getLvl();
         this.abilityScoreDTO = new AbillityScoresDTO(ch.getAbillityScores());
         this.inventoryDTO = new ArrayList<>();
